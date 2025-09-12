@@ -8,27 +8,27 @@ import {
   redaction50,
 } from "./fonts";
 import { cn } from "@/lib/utils";
-import PlausibleProvider from "next-plausible";
 import { baseUrl } from "./sitemap";
+import { Suspense } from "react";
+import BackgroundElement from "@/components/three/background-element";
 
 export const metadata: Metadata = {
   title: {
-    default: "Yufeng Zhao",
-    template: "%s - Yufeng Zhao",
+    default: "How to Make Almost Anything with Yufeng Zhao",
+    template: "%s - HTMAA w/ Yufeng Zhao",
   },
-  description: `Yufeng Zhao is a media artist and technologist based in Brooklyn.`,
+  description: `How to Make Almost Anything with Yufeng Zhao.`,
   keywords: [
     "Yufeng",
     "Zhao",
     "Yufeng Zhao",
-    "media artist",
-    "creative technologist",
-    "technologist",
-    "Brooklyn",
+    "How to Make Almost Anything",
+    "MIT Media Lab",
+    "Center for Bits and Atoms",
   ],
   metadataBase: new URL(baseUrl),
   openGraph: {
-    siteName: "Yufeng Zhao",
+    siteName: "How to Make Almost Anything with Yufeng Zhao",
     url: baseUrl,
   },
 };
@@ -50,18 +50,7 @@ export default function RootLayout({
         redaction50.variable,
       )}
     >
-      <head>
-        <PlausibleProvider
-          domain="yufengzhao.com"
-          customDomain="https://plausible.yufeng.place"
-          enabled={true}
-          selfHosted={true}
-          trackFileDownloads={true}
-          trackOutboundLinks={true}
-          trackLocalhost={true}
-          taggedEvents={true}
-        />
-      </head>
+      <head></head>
       <body className="">
         {children}
         {/* <Suspense fallback={<div></div>}>

@@ -43,7 +43,7 @@ function RotatingSphere() {
         <meshBasicMaterial attach="material" color="#333" wireframe />
       </TorusKnot> */}
       <Sphere ref={sphereRef} args={[10, 12, 12]}>
-        <meshBasicMaterial attach="material" color="#333" wireframe />
+        <meshBasicMaterial attach="material" color="#030" wireframe />
       </Sphere>
     </group>
   );

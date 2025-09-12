@@ -64,6 +64,7 @@ const components = {
   hr: basicElements.hr,
   ul: basicElements.ul,
   li: basicElements.li,
+  code: basicElements.code,
   // Image: RoundedImage,
   a: basicElements.a as React.ElementType,
   // code: Code,

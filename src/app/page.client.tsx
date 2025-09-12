@@ -70,9 +70,9 @@ export default function HomeClient({ projects }: { projects: ProjectEntry[] }) {
               : "This might not be a search bar"
           }
           className={cn(
-            "concave w-full rounded-full bg-foreground px-4 py-2 md:py-1",
-            "focus:border-yellow-400 focus:outline-none focus:ring-2 focus:ring-yellow-400/20",
-            "text-background placeholder:text-background/50",
+            "concave w-full rounded-full bg-background px-4 py-2 md:py-1",
+            "focus:border-green-500 focus:outline-none focus:ring-2 focus:ring-green-500",
+            "text-foreground placeholder:text-foreground/50",
             "font-condensed",
           )}
           onFocus={() => {
@@ -85,25 +85,6 @@ export default function HomeClient({ projects }: { projects: ProjectEntry[] }) {
             return () => clearTimeout(timeoutId);
           }}
         />
-        <InlineLink
-          href={`#${nextRandomProject}`}
-          target="_self"
-          onClick={() => {
-            let nextProject = randomProject();
-            while (nextProject === nextRandomProject) {
-              nextProject = randomProject();
-            }
-            setNextRandomProject(nextProject);
-          }}
-        >
-          <Button className="group-hover:white-glow-lg group bg-black px-6 py-5 md:py-3">
-            <div className="font-condensed mr-1 hidden h-4 -translate-y-[0.18rem] italic group-hover:animate-bounce group-hover:text-yellow-400 md:block">
-              feeling lucky?
-            </div>
-            <span className="sr-only">go to a random project</span>
-            <ShuffleIcon className="group-hover:animate-spin-ease size-4 group-hover:text-yellow-400" />
-          </Button>
-        </InlineLink>
       </div>
       <div id="project-cards" className={cn(`flex flex-col px-2`)}>
         {filteredProjects.map((project) => (

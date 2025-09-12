@@ -349,7 +349,7 @@ function FrontmatterExternalLink({
                 className="my-auto group-hover:animate-spin"
               />
             </div>
-            <div className="group-hover:white-glow-text-md my-auto -translate-y-[1px] underline group-hover:text-yellow-300 group-hover:no-underline">
+            <div className="group-hover:white-glow-text-md my-auto -translate-y-[1px] underline group-hover:text-green-500 group-hover:no-underline">
               {title}
             </div>
           </div>

@@ -28,8 +28,8 @@ function HeadingHighlightSpan({
   return (
     <span
       className={cn(
-        "cursor-pointer border-b-2 border-foreground underline-offset-4 transition-all hover:border-b-2 hover:border-yellow-400",
-        "hover:white-glow-text-md hover:text-yellow-400",
+        "cursor-pointer border-b-2 border-foreground underline-offset-4 transition-all hover:border-b-2 hover:border-green-500",
+        "hover:white-glow-text-md hover:text-green-500",
         "font-condensed hover:blur-[0.5px]",
         className,
       )}
@@ -50,8 +50,7 @@ const H1 = ({
   React.HTMLAttributes<HTMLHeadingElement>,
   HTMLHeadingElement
 >) => {
-  // eslint-disable-next-line @typescript-eslint/restrict-template-expressions
-  const slug = slugify(children?.toString() ?? "");
+  const slug = slugify(childrenToString(children));
   return (
     <h1
       className="mb-6 mt-6 select-none text-4xl font-semibold tracking-tight"
@@ -70,7 +69,7 @@ const H2 = ({
   React.HTMLAttributes<HTMLHeadingElement>,
   HTMLHeadingElement
 >) => {
-  const slug = slugify(children?.toString() ?? "");
+  const slug = slugify(childrenToString(children));
   return (
     <h2
       className="mb-6 mt-6 select-none text-2xl font-semibold tracking-tight"
@@ -89,7 +88,7 @@ const H3 = ({
   React.HTMLAttributes<HTMLHeadingElement>,
   HTMLHeadingElement
 >) => {
-  const slug = slugify(children?.toString() ?? "");
+  const slug = slugify(childrenToString(children));
   return (
     <h3
       className="mb-6 mt-6 select-none text-xl font-semibold tracking-tight underline-offset-4"
@@ -108,7 +107,7 @@ const H4 = ({
   React.HTMLAttributes<HTMLHeadingElement>,
   HTMLHeadingElement
 >) => {
-  const slug = slugify(children?.toString() ?? "");
+  const slug = slugify(childrenToString(children));
   return (
     <h4
       className="mb-4 mt-4 select-none text-lg font-semibold tracking-tight underline-offset-4"
@@ -123,7 +122,7 @@ const H4 = ({
 };
 
 const H5 = ({ children }: { children: React.ReactNode }) => {
-  const slug = slugify(children?.toString() ?? "");
+  const slug = slugify(childrenToString(children));
   return (
     <h5 className="mb-3 select-none text-lg font-normal" id={slug}>
       <a href={`#${slug}`} className="anchor">
@@ -134,7 +133,7 @@ const H5 = ({ children }: { children: React.ReactNode }) => {
 };
 
 const H6 = ({ children }: { children: React.ReactNode }) => {
-  const slug = slugify(children?.toString() ?? "");
+  const slug = slugify(childrenToString(children));
   return (
     <h6 className="select-none pt-2 text-xl" id={slug}>
       <a href={`#${slug}`} className="anchor">
@@ -160,7 +159,7 @@ const BLOCKQUOTE = ({
       "font-redaction-lg",
       "mb-4",
       "bg-primary-foreground/50 text-foreground/80",
-      "border-l-4 border-foreground/30 hover:border-yellow-400",
+      "border-l-4 border-foreground/30 hover:border-green-500",
       "text-xl",
       "select-none",
     )}
@@ -233,6 +232,14 @@ const IMG = ({
 
 const HR = () => <Separator className="my-4"></Separator>;
 
+const CODE = ({
+  children,
+}: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>) => (
+  <code className="rounded-md bg-primary-foreground/50 px-1 py-0.5 font-mono text-foreground/80">
+    {children}
+  </code>
+);
+
 const basicElements = {
   h1: H1,
   h2: H2,
@@ -248,6 +255,7 @@ const basicElements = {
   strong: STRONG,
   img: IMG,
   hr: HR,
+  code: CODE,
   a: InlineLink,
 };
 

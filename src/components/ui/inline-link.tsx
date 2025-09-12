@@ -7,7 +7,7 @@ import Link from "next/link";
 import { cn } from "@/lib/utils";
 
 const inlineLinkVariants = cva(
-  "underline hover:text-yellow-300 hover:no-underline hover:blur-[0.5px] underline-offset-2",
+  "underline hover:text-green-400 hover:no-underline hover:blur-[0.5px] underline-offset-2",
   {
     variants: {
       variant: {

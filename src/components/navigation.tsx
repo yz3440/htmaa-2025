@@ -8,6 +8,7 @@ import { cn } from "@/lib/utils";
 import { Link } from "next-view-transitions";
 import { usePathname } from "next/navigation";
 import { type LayoutContext } from "@/components/layout";
+import { ExternalLinkIcon } from "lucide-react";
 
 export interface NavigationProps extends React.HTMLAttributes<HTMLDivElement> {
   tableOfContents?: TableOfContents;
@@ -27,8 +28,16 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
     href: "/",
     className: "cursor-zoom-out",
   },
-  { title: "featured", href: "/featured", className: "cursor-zoom-in" },
-  { title: "about", href: "/about", className: "cursor-help" },
+  {
+    title: "website",
+    href: "https://yufengzhao.com",
+    className: "cursor-help",
+  },
+  {
+    title: "github",
+    href: "https://github.com/yz3440",
+    className: "cursor-help",
+  },
 ];
 
 export function Navigation({
@@ -45,8 +54,6 @@ export function Navigation({
     headingLevels: ["h2"],
   });
 
-  const nameHref = pathname === "/" ? "/about" : "/";
-
   return (
     <nav
       className={cn("flex h-full flex-col justify-between", className)}
@@ -54,35 +61,17 @@ export function Navigation({
     >
       <section>
         <HeadingTag className="font-condensed text-lg font-bold">
-          <InlineLink href={nameHref}>
-            Yufeng Zhao
-            <span className="sr-only">
-              {" "}
-              is a media artist and technologist based in Brooklyn.
-            </span>
-          </InlineLink>
+          How to Make Almost Anything <br className="hidden md:block" />{" "}
+          <span className="font-normal">with</span> Yufeng Zhao
         </HeadingTag>
-        <p className="font-condensed mt-2">
-          <span className="cursor-help transition-all duration-500 hover:line-through">
-            media artist
-          </span>{" "}
-          /{" "}
-          <span className="cursor-progress transition-all duration-500 hover:line-through">
-            technologist
-          </span>
-        </p>
-        <p className="font-condensed mt-0 text-foreground/60">
-          <span className="cursor-zoom-in transition-all duration-500 hover:line-through">
-            data
-          </span>{" "}
-          /{" "}
-          <span className="cursor-context-menu transition-all duration-500 hover:line-through">
-            graphics
-          </span>{" "}
-          /{" "}
-          <span className="cursor-alias transition-all duration-500 hover:line-through">
-            experience
-          </span>
+        <p className="font-condensed mt-2 text-foreground/60">
+          a documentation blog about making things in{" "}
+          <Link
+            href="https://fab.cba.mit.edu/classes/MAS.863/"
+            className="underline"
+          >
+            HTMAA 2025
+          </Link>
         </p>
 
         <div className="font-condensed mt-2 grid grid-cols-3 md:grid-cols-1">
@@ -149,15 +138,21 @@ function InlineLinkWithHighlight({
   children: React.ReactNode;
   className?: string;
 }) {
+  const shouldTargetBlank = href.startsWith("http");
   return (
     <InlineLink
       href={href}
+      target={shouldTargetBlank ? "_blank" : "_self"}
       className={cn(
-        currentPath === href && "font-bold text-yellow-300",
+        currentPath === href && "font-bold text-green-500",
+        "group",
         className,
       )}
     >
       {children}
+      {shouldTargetBlank && (
+        <ExternalLinkIcon className="ml-1 inline size-3 text-foreground/60 group-hover:text-green-500 group-hover:no-underline group-hover:blur-[0.5px]" />
+      )}
     </InlineLink>
   );
 }

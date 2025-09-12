@@ -28,23 +28,20 @@ export default function Layout({
       {/* Decorations */}
 
       {/* BOTTOM RIGHT */}
-      {/* <div
-        className="fixed bottom-0 right-0 z-10 h-36 w-36 translate-x-1/2 translate-y-1/2 rounded-full transition-all hover:scale-150 hover:bg-blue-500 lg:h-64 lg:w-64"
+      <div
+        className="fixed bottom-0 right-0 z-10 h-36 w-36 translate-x-1/2 translate-y-1/2 rounded-full transition-all hover:scale-150 hover:bg-black/50 lg:h-64 lg:w-64"
         style={{
           backgroundImage:
-            "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(25,25,25,0) 65%, rgba(25,25,25,0) 70%)",
+            "radial-gradient(circle, rgba(0,255,0,1) 0%, rgba(0,25,0,0) 65%, rgba(0,25,0,0) 70%)",
         }}
-      ></div> */}
-      <Suspense fallback={null}>
-        <DraggableEasterEgg className="fixed bottom-0 right-0 z-10 h-36 w-36 translate-x-1/2 translate-y-1/2 rounded-full transition-all hover:scale-150 hover:bg-blue-500 lg:h-64 lg:w-64" />
-      </Suspense>
+      ></div>
 
       {/* TOP LEFT */}
       <div
-        className="fixed left-0 top-0 -z-10 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all hover:scale-150 hover:bg-blue-500 lg:h-96 lg:w-96"
+        className="fixed left-0 top-0 -z-10 h-24 w-24 -translate-x-1/2 -translate-y-1/2 rounded-full transition-all hover:scale-150 hover:bg-black/50 lg:h-96 lg:w-96"
         style={{
           backgroundImage:
-            "radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(25,25,25,0) 65%, rgba(25,25,25,0) 70%)",
+            "radial-gradient(circle, rgba(0,255,0,1) 0%, rgba(0,25,0,0) 65%, rgba(0,25,0,0) 70%)",
         }}
       ></div>
 
@@ -88,7 +85,6 @@ export default function Layout({
         id="main"
       >
         {children}
-        <BackToTopButton />
       </main>
 
       {/* <div className="z-10 grid grid-cols-1 gap-4 sm:grid-cols-2 md:gap-8 lg:grid-cols-4">
@@ -104,50 +100,5 @@ export default function Layout({
         <BlurryCursorOverlay />
       </Suspense>
     </div>
-  );
-}
-
-function BackToTopButton() {
-  return (
-    <>
-      <Link
-        className="fixed bottom-4 left-4 z-10 block h-10 w-10 cursor-pointer transition-all md:hidden md:h-6 md:w-6 md:cursor-default md:text-black md:hover:-rotate-90 md:hover:scale-150"
-        href="#"
-        scroll={true}
-        aria-label="back to top"
-      >
-        <span className="sr-only">Back to top</span>
-        <Button
-          className="flex h-full w-full items-center justify-center font-bold"
-          size="sm"
-          lighting="convex-sm"
-        >
-          <ArrowUp size={24} />
-        </Button>
-      </Link>
-
-      <div className={`mb-0 mt-8 hidden justify-center md:flex`}>
-        <InlineLink href="#" scroll={true} className="font-bold">
-          <span className="sr-only">Back to top</span>
-          <Button
-            size="sm"
-            lighting="convex-sm"
-            className="group gap-1 transition-all"
-            aria-label="back to top"
-          >
-            <div className="translate-y-[1px]">
-              <ArrowUp size={12} className="my-auto group-hover:animate-spin" />
-            </div>
-            <div className="group-hover:white-glow-text-md my-auto underline group-hover:text-yellow-300 group-hover:no-underline">
-              back to top
-            </div>
-
-            <div className="translate-y-[1px]">
-              <ArrowUp size={12} className="my-auto group-hover:animate-spin" />
-            </div>
-          </Button>
-        </InlineLink>
-      </div>
-    </>
   );
 }

@@ -61,7 +61,7 @@ export function ProjectCard({
             <span className={`tracking-tight`}>{metadata.title}</span>
             <ExternalLinkIcon
               className={cn(
-                "mt-[2px] hidden size-3 -translate-x-4 text-yellow-500 opacity-0 transition-all duration-300",
+                "mt-[2px] hidden size-3 -translate-x-4 text-green-500 opacity-0 transition-all duration-300",
                 metadata.overrideLink && "inline",
                 "group-hover:translate-x-0 group-hover:opacity-100",
               )}
@@ -99,7 +99,7 @@ export function ProjectCard({
         {/* TOP - PROJECT DATE & CATEGORY */}
         <div className="flex justify-between pb-2">
           <p className="font-condensed">{metadata.displayedDate ?? year}</p>
-          <p className="font-condensed relative italic text-white">
+          <p className="font-condensed relative italic">
             <span className="low-highlight">{metadata.displayedCategory}</span>
           </p>
         </div>
