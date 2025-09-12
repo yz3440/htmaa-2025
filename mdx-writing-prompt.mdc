@@ -1,0 +1,139 @@
+# MDX Portfolio Project Writing Guide
+
+You are helping write MDX articles for a Next.js portfolio website. Each article documents a creative/technical project with a specific writing style and uses custom React components.
+
+## Frontmatter Structure
+
+Every article starts with YAML frontmatter containing:
+
+**Required fields:**
+
+- `title`: Project name in quotes
+- `categories`: Array of categories (e.g., ["art", "web-based"], ["art", "film"])
+- `displayedCategory`: Single category shown publicly
+- `date`: Publication date (YYYY-MM-DD format)
+- `year`: Year as number
+- `description`: Full project description
+- `shortDescription`: Concise version for previews/cards
+- `image`: Hero image path (/project-assets/YEAR/project-name/hero.jpg)
+- `visible`: Boolean (usually true)
+- `featured`: Boolean
+- `priority`: Number for ordering
+
+**Optional fields:**
+
+- `tags`: Array of relevant tags
+- `externalLink`, `videoLink`, `githubLink`: Project URLs
+- `publicationLinks`, `pressLinks`, `featuredInLinks`: Arrays with `title` and `url` objects
+- `roles`, `collaborators`: Arrays for credits
+- `video`: Hero video path
+- `tableOfContents`: Boolean
+- `notes`: Internal notes
+
+## Writing Style
+
+**Opening Strategy:** Start with a concise paragraph that:
+
+- Links to the live project (if available)
+- Summarizes what the project is and does
+- Mentions the time period or key metrics
+- Provides immediate context
+
+**Content Organization:**
+
+- Use `##` headings for major sections (Dataset, Exhibition, Key Features, etc.)
+- Include project context and how it relates to other work
+- Document technical methodology when relevant
+- List exhibition history, publications, and press coverage
+- Credit collaborators and institutions
+
+**Tone:** Professional but accessible, focusing on the work's conceptual and technical aspects rather than personal reflection.
+
+## Custom Component System
+
+### Media Components
+
+**`<Media>`** - Primary component for images and videos
+
+```jsx
+<Media
+  src="/project-assets/2024/project-name/image.jpg"
+  caption="Descriptive caption"
+  widthPercentage={66} // 25, 33, 50, 66, 75, 100 (default is 100)
+/>
+```
+
+**`<MediaTextSection>`** - Side-by-side media and text layout
+
+```jsx
+<MediaTextSection
+  src="/path/to/media"
+  alt="Alt text"
+  caption="Media caption"
+  mediaPosition="left" // "left" or "right"
+  textPosition="top" // "top" or "bottom"
+  mediaWidth="normal" // "narrow", "normal", "wide"
+>
+  Text content that appears alongside the media. Can include multiple paragraphs
+  and markdown.
+</MediaTextSection>
+```
+
+### Layout Components
+
+**`<GridSection>`** - Multi-column layouts for galleries, this works for any children components, not just `<Media>`
+
+```jsx
+<GridSection columnCount={2}>
+  <Media src="..." caption="..." />
+  <Media src="..." caption="..." />
+</GridSection>
+```
+
+**`<BulletPoint>`** - Feature highlights with visual emphasis
+
+```jsx
+<BulletPoint emoji="🗺️" title="Feature Title">
+  Description of the feature or capability
+</BulletPoint>
+```
+
+**`<EmbeddedVideo>`** - External video embedding
+
+```jsx
+<EmbeddedVideo src="https://www.youtube.com/watch?v=..." />
+```
+
+### Text Enhancement
+
+**`<SubHeading>`** - Minor section breaks with arrow styling
+
+```jsx
+<SubHeading h={1}>Section Name</SubHeading>
+```
+
+**Standard Markdown Enhanced:**
+
+- `**bold**` becomes emphasized text
+- `*italic*` becomes low-highlight effect
+- `> blockquotes` for disclaimers and important notes
+- `[links](url)` automatically styled as inline links
+- `![images](path)` automatically converted to `<Media>` components
+
+## Component Usage Patterns
+
+1. **Hero Media**: Use `<Media>` with full width for main project images
+2. **Process Documentation**: Use `<MediaTextSection>` to explain workflow with visuals
+3. **Feature Lists**: Use `<BulletPoint>` in `<GridSection>` for capability overviews
+4. **Gallery Sections**: Use `<GridSection>` with multiple `<Media>` components
+5. **Technical Diagrams**: Use `<Media>` with descriptive captions
+6. **Important Notes**: Use blockquotes for disclaimers or key information
+7. **External Links**: Reference live demos, GitHub repos, and press coverage throughout
+
+## File Organization
+
+- All media assets go in `/project-assets/YEAR/project-slug/`
+- Use consistent naming: `hero.jpg`, `screenshot.jpg`, etc.
+- If you think certain images and video should be present, please make up the file names and the content writer will add the media later.
+
+This system creates visually rich, well-structured project documentation that balances technical detail with accessible presentation.

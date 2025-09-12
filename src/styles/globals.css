@@ -1,0 +1,162 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer utilities {
+  .font-condensed {
+    font-family:
+      var(--font-texgyreheros-condensed), var(--font-glowsans-compressed);
+  }
+  .low-highlight {
+    background: linear-gradient(
+      to top,
+      rgba(255, 217, 0, 0.272) 50%,
+      transparent 50%
+    );
+  }
+  .low-highlight-50 {
+    background: linear-gradient(to top, green 50%, transparent 50%);
+  }
+  .white-glow-md {
+    box-shadow: 0 0 16px 0px white !important;
+  }
+
+  .white-glow-lg {
+    box-shadow: 0 0 32px 0px white !important;
+  }
+
+  .white-glow-xl {
+    box-shadow: 0 0 64px 0px white !important;
+  }
+
+  .white-glow-2xl {
+    box-shadow: 0 0 128px 1px white !important;
+  }
+
+  .white-glow-text-md {
+    text-shadow: 0 0 16px white;
+  }
+  .white-glow-text-lg {
+    text-shadow: 0 0 32px white;
+  }
+
+  .animate-spin-ease {
+    animation: spin-ease 1s ease-in-out infinite;
+  }
+}
+
+@keyframes spin-ease {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@layer base {
+  :root {
+    --background: 0 0% 98%;
+    --foreground: 0 0% 3.9%;
+
+    --card: 0 0% 98%;
+    --card-foreground: 0 0% 3.9%;
+
+    --popover: 0 0% 98$ --popover-foreground: 0 0% 3.9%;
+
+    --primary: 0 0% 9%;
+    --primary-foreground: 0 0% 98%;
+
+    --secondary: 0 0% 98%;
+    --secondary-foreground: 0 0% 14.9%;
+
+    --muted: 0 0% 63.9%;
+    --muted-foreground: 0 0% 14.9%;
+
+    --accent: 0 0% 98%;
+    --accent-foreground: 0 0% 14.9%;
+
+    --destructive: 0 62.8% 20.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 28.9%;
+    --input: 0 0% 45.9%;
+    --ring: 0 0% 83.1%;
+
+    --radius: 0.5rem;
+  }
+
+  .dark {
+    --background: 0 0% 3.9%;
+    --foreground: 0 0% 98%;
+
+    --card: 0 0% 3.9%;
+    --card-foreground: 0 0% 98%;
+
+    --popover: 0 0% 3.9%;
+    --popover-foreground: 0 0% 98%;
+
+    --primary: 0 0% 98%;
+    --primary-foreground: 0 0% 9%;
+
+    --secondary: 0 0% 14.9%;
+    --secondary-foreground: 0 0% 98%;
+
+    --muted: 0 0% 14.9%;
+    --muted-foreground: 0 0% 63.9%;
+
+    --accent: 0 0% 14.9%;
+    --accent-foreground: 0 0% 98%;
+
+    --destructive: 0 62.8% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 0 0% 14.9%;
+    --input: 0 0% 14.9%;
+    --ring: 0 0% 83.1%;
+  }
+}
+
+@layer base {
+  * {
+    @apply border-border;
+  }
+  body {
+    @apply bg-background text-foreground;
+  }
+}
+
+html {
+  /* --scroll-behavior: smooth !important; */
+  scroll-behavior: smooth !important;
+}
+
+* {
+  /* make the default # margin top 1.5rem, scroll-mt-6 */
+  scroll-margin-top: 1.5rem;
+}
+
+::selection {
+  color: black;
+  background: rgb(250 204 21);
+}
+
+.convex {
+  @apply shadow-inner shadow-foreground/60;
+}
+
+.convex-sm {
+  @apply shadow-inner shadow-foreground/20;
+}
+
+.concave {
+  @apply shadow-inner shadow-background/60;
+}
+
+.concave-sm {
+  @apply shadow-inner shadow-background/20;
+}
+
+.glow-on-hover {
+  @apply hover:white-glow-md transition-all duration-500;
+}
