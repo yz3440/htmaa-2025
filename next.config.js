@@ -11,9 +11,8 @@ const config = {
   pageExtensions: ["mdx", "jsx", "js", "ts", "tsx"],
   output: "export",
   trailingSlash: true,
-  images: {
-    unoptimized: true,
-  },
+  basePath: "/classes/863.25/people/YufengZhao",
+  assetPrefix: "/classes/863.25/people/YufengZhao",
 };
 
 export default withMDX({
