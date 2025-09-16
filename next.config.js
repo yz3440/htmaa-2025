@@ -12,6 +12,7 @@ const config = {
   output: "export",
   trailingSlash: true,
   basePath: "/classes/863.25/people/YufengZhao",
+  assetPrefix: "https://fab.cba.mit.edu/classes/863.25/people/YufengZhao",
   images: {
     unoptimized: true,
   },
