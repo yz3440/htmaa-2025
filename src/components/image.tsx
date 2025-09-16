@@ -13,7 +13,7 @@ export const Image: React.FC<ImageProps> = ({ src, ...rest }) => {
     process.env &&
     process.env.NODE_ENV === "development";
 
-  const finalSrc = isDev ? `/${normalizedSrc}` : `${basePath}${normalizedSrc}`;
+  const finalSrc = isDev ? `/${normalizedSrc}` : `${basePath}/${normalizedSrc}`;
 
   return <NextImage src={finalSrc} {...rest} />;
 };
