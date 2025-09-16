@@ -1,5 +1,5 @@
 import NextImage, { ImageProps } from "next/image";
-import { baseUrl } from "@/app/sitemap";
+import { baseUrl } from "@/sitemeta";
 
 export const Image: React.FC<ImageProps> = ({ src, ...rest }) => {
   const normalizedSrc =

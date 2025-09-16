@@ -8,7 +8,7 @@ import {
   redaction50,
 } from "./fonts";
 import { cn } from "@/lib/utils";
-import { baseUrl } from "./sitemap";
+import { baseUrl } from "@/sitemeta";
 import { Suspense } from "react";
 import BackgroundElement from "@/components/three/background-element";
 

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
 import { CustomMDX } from "@/components/mdx";
 import { getAllProjects } from "@/lib/mdx";
-import { baseUrl } from "@/app/sitemap";
+import { baseUrl } from "@/sitemeta";
 import { ProjectCard } from "@/components/project-block/project-card";
 import { getFilteredProjects } from "@/lib/mdx/project-getter";
 import Layout from "@/components/layout";

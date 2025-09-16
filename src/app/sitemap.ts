@@ -1,6 +1,5 @@
 import { getFilteredProjects } from "@/lib/mdx/project-getter";
-export const baseUrl =
-  "https://fab.cba.mit.edu/classes/863.25/people/YufengZhao";
+import { baseUrl } from "@/sitemeta";
 
 export default async function sitemap() {
   const orderedVisibleProjects = getFilteredProjects({});
