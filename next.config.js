@@ -13,6 +13,9 @@ const config = {
   trailingSlash: true,
   basePath: "/classes/863.25/people/YufengZhao",
   assetPrefix: "/classes/863.25/people/YufengZhao",
+  images: {
+    unoptimized: true,
+  },
 };
 
 export default withMDX({
