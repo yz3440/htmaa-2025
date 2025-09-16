@@ -39,7 +39,7 @@ jobs:
       - name: Check out gitlab repo
         # Customize git clone url here
         run: |
-          git clone https://YufengZhao:${{ secrets.GITLAB_ACCESS_TOKEN }}@gitlab.cba.mit.edu/classes/863.25/people/YufengZhao.git public
+          git clone https://YufengZhao:${{ secrets.GITLAB_ACCESS_TOKEN }}@gitlab.cba.mit.edu/classes/863.25/people/YufengZhao.git gitlab-repo
       - name: npm
         # Customize build script here
         run: |
@@ -48,10 +48,12 @@ jobs:
       - name: Push
         # Customize deployment folder here
         run: |
-          cd out
+          # Copy built files to gitlab repo
+          cp -r out/* gitlab-repo/
+          cd gitlab-repo
           git config --global user.name "Yufeng, Zhao"
           git config --global user.email "yufengz@mit.edu"
           git add .
-          git commit -m "${{ github.event.head_commit.message }}"
+          git commit -m "${{ github.event.head_commit.message }}" || echo "No changes to commit"
           git status
           git push origin main
