@@ -245,21 +245,43 @@ const TABLE = ({
 }: React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLTableElement>,
   HTMLTableElement
->) => <table className="w-full">{children}</table>;
+>) => <table className="group mb-4 w-full">{children}</table>;
 
-const TD = ({
+const THEAD = ({
   children,
 }: React.DetailedHTMLProps<
-  React.HTMLAttributes<HTMLTableCellElement>,
-  HTMLTableCellElement
->) => <td className="border border-gray-300 p-2">{children}</td>;
+  React.HTMLAttributes<HTMLTableSectionElement>,
+  HTMLTableSectionElement
+>) => <thead className="font-condensed round-full">{children}</thead>;
+
+const TBODY = ({
+  children,
+}: React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLTableSectionElement>,
+  HTMLTableSectionElement
+>) => <tbody className="font-condensed">{children}</tbody>;
 
 const TH = ({
   children,
 }: React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLTableCellElement>,
   HTMLTableCellElement
->) => <th className="border border-gray-300 p-2">{children}</th>;
+>) => (
+  <th className="border border-transparent p-2 transition-colors group-hover:border-green-500">
+    <div className="w-auto rounded-full bg-accent/40">{children}</div>
+  </th>
+);
+
+const TD = ({
+  children,
+}: React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLTableCellElement>,
+  HTMLTableCellElement
+>) => (
+  <td className="border border-transparent p-1 transition-colors group-hover:border-green-400">
+    <div className="rounded-full bg-accent/10 px-3 py-1">{children}</div>
+  </td>
+);
 
 const basicElements = {
   h1: H1,
@@ -278,6 +300,8 @@ const basicElements = {
   hr: HR,
   code: CODE,
   table: TABLE,
+  thead: THEAD,
+  tbody: TBODY,
   td: TD,
   th: TH,
   a: InlineLink,

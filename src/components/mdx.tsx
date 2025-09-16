@@ -14,6 +14,7 @@ const childrenToString = (children: React.ReactNode): string => {
   return "";
 };
 import { MDXRemote, type MDXRemoteProps } from "next-mdx-remote/rsc";
+import remarkGfm from "remark-gfm";
 import React from "react";
 import basicElements from "./mdx/basic-elements";
 import { EmbeddedVideo } from "./mdx/embedded-video";
@@ -65,6 +66,8 @@ const components = {
   ul: basicElements.ul,
   li: basicElements.li,
   table: basicElements.table,
+  thead: basicElements.thead,
+  tbody: basicElements.tbody,
   td: basicElements.td,
   th: basicElements.th,
   code: basicElements.code,
@@ -82,7 +85,7 @@ const components = {
 
 // https://github.com/mdx-js/mdx/blob/v1/packages/mdx/index.js
 const DEFAULT_OPTIONS = {
-  remarkPlugins: [],
+  remarkPlugins: [remarkGfm],
   rehypePlugins: [],
   compilers: [],
 };

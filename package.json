@@ -54,6 +54,7 @@
     "react-dom": "^18.3.1",
     "react-medium-image-zoom": "^5.2.10",
     "react-player": "^2.16.0",
+    "remark-gfm": "^4.0.1",
     "server-only": "^0.0.1",
     "simple-icons": "^13.18.0",
     "sugar-high": "^0.7.0",
