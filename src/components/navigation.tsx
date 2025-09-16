@@ -68,6 +68,7 @@ export function Navigation({
           a documentation blog about making things in{" "}
           <Link
             href="https://fab.cba.mit.edu/classes/MAS.863/"
+            target="_blank"
             className="underline"
           >
             HTMAA 2025
