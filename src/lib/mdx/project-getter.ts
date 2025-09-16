@@ -50,9 +50,9 @@ function sortProjects(a: ProjectEntry, b: ProjectEntry) {
 
   const dateA = new Date(a.metadata.date);
   const dateB = new Date(b.metadata.date);
-  if (dateA < dateB) {
+  if (dateA > dateB) {
     return 1;
-  } else if (dateA > dateB) {
+  } else if (dateA <= dateB) {
     return -1;
   } else {
     return a.metadata.priority! - b.metadata.priority!;
