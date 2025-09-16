@@ -61,8 +61,10 @@ export function Navigation({
     >
       <section>
         <HeadingTag className="font-condensed text-lg font-bold">
-          How to Make Almost Anything <br className="hidden md:block" />{" "}
-          <span className="font-normal">with</span> Yufeng Zhao
+          <Link href="/">
+            How to Make Almost Anything <br className="hidden md:block" />{" "}
+            <span className="font-normal">with</span> Yufeng Zhao
+          </Link>
         </HeadingTag>
         <p className="font-condensed mt-2 text-foreground/60">
           a documentation blog about making things in{" "}
