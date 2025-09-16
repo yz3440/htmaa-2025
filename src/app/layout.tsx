@@ -29,7 +29,7 @@ export const metadata: Metadata = {
     : undefined,
   openGraph: {
     siteName: "How to Make Almost Anything with Yufeng Zhao",
-    url: env.NEXT_PUBLIC_BASE_URL ?? "",
+    url: env.NEXT_PUBLIC_DOMAIN ?? "",
   },
 };
 

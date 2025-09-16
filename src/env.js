@@ -27,6 +27,7 @@ export const env = createEnv({
     NEXT_PUBLIC_BASE_PATH: z.string().optional(),
     NEXT_PUBLIC_ASSET_PREFIX: z.string().optional(),
     NEXT_PUBLIC_BASE_URL: z.string().optional(),
+    NEXT_PUBLIC_DOMAIN: z.string().optional(),
   },
 
   /**
@@ -41,6 +42,8 @@ export const env = createEnv({
       process.env.NODE_ENV === "development" ? undefined : baseUrl,
     NEXT_PUBLIC_BASE_URL:
       process.env.NODE_ENV === "development" ? undefined : baseUrl,
+    NEXT_PUBLIC_DOMAIN:
+      process.env.NODE_ENV === "development" ? undefined : domain,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially
