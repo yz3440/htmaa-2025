@@ -61,10 +61,10 @@ export function Navigation({
     >
       <section>
         <HeadingTag className="font-condensed text-lg font-bold">
-          <Link href="/">
+          <InlineLink href="/" className="no-underline">
             How to Make Almost Anything <br className="hidden md:block" />{" "}
             <span className="font-normal">with</span> Yufeng Zhao
-          </Link>
+          </InlineLink>
         </HeadingTag>
         <p className="font-condensed mt-2 text-foreground/60">
           a documentation blog about making things in{" "}
