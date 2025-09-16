@@ -1,6 +1,12 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+export const domain = "https://fab.cba.mit.edu";
+
+export const basePath = "/classes/863.25/people/YufengZhao";
+
+export const baseUrl = `${domain}${basePath}`;
+
 export const env = createEnv({
   /**
    * Specify your server-side environment variables schema here. This way you can ensure the app
@@ -18,7 +24,9 @@ export const env = createEnv({
    * `NEXT_PUBLIC_`.
    */
   client: {
-    // NEXT_PUBLIC_CLIENTVAR: z.string(),
+    NEXT_PUBLIC_BASE_PATH: z.string().optional(),
+    NEXT_PUBLIC_ASSET_PREFIX: z.string().optional(),
+    NEXT_PUBLIC_BASE_URL: z.string().optional(),
   },
 
   /**
@@ -27,7 +35,12 @@ export const env = createEnv({
    */
   runtimeEnv: {
     NODE_ENV: process.env.NODE_ENV,
-    // NEXT_PUBLIC_CLIENTVAR: process.env.NEXT_PUBLIC_CLIENTVAR,
+    NEXT_PUBLIC_BASE_PATH:
+      process.env.NODE_ENV === "development" ? undefined : basePath,
+    NEXT_PUBLIC_ASSET_PREFIX:
+      process.env.NODE_ENV === "development" ? undefined : baseUrl,
+    NEXT_PUBLIC_BASE_URL:
+      process.env.NODE_ENV === "development" ? undefined : baseUrl,
   },
   /**
    * Run `build` or `dev` with `SKIP_ENV_VALIDATION` to skip env validation. This is especially

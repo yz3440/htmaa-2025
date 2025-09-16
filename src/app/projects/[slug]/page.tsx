@@ -1,7 +1,6 @@
 import { notFound } from "next/navigation";
 import { CustomMDX } from "@/components/mdx";
-import { getAllProjects } from "@/lib/mdx";
-import { baseUrl } from "@/sitemeta";
+import { env } from "@/env.js";
 import { ProjectCard } from "@/components/project-block/project-card";
 import { getFilteredProjects } from "@/lib/mdx/project-getter";
 import Layout from "@/components/layout";
@@ -38,7 +37,7 @@ export function generateMetadata({ params }: Props) {
 
   const ogImage = image
     ? image
-    : `${baseUrl}/og?title=${encodeURIComponent(title)}`;
+    : `${env.NEXT_PUBLIC_BASE_URL}/og?title=${encodeURIComponent(title)}`;
 
   return {
     title,
@@ -48,7 +47,7 @@ export function generateMetadata({ params }: Props) {
       description,
       type: "article",
       publishedTime,
-      url: `${baseUrl}/project/${project.slug}`,
+      url: `${env.NEXT_PUBLIC_BASE_URL}/project/${project.slug}`,
       images: [
         {
           url: ogImage,
@@ -93,9 +92,9 @@ export default async function ProjectPage({ params }: Props) {
                 dateModified: metadata.date,
                 description: metadata.description,
                 image: metadata.image
-                  ? `${baseUrl}${metadata.image}`
+                  ? `${env.NEXT_PUBLIC_BASE_URL}${metadata.image}`
                   : `/og?title=${encodeURIComponent(metadata.title)}`,
-                url: `${baseUrl}/blog/${slug}`,
+                url: `${env.NEXT_PUBLIC_BASE_URL}/blog/${slug}`,
                 author: {
                   "@type": "Person",
                   name: "Yufeng Zhao",

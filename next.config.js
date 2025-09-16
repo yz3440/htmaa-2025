@@ -5,14 +5,15 @@
 await import("./src/env.js");
 
 import withMDX from "@next/mdx";
+import { env } from "./src/env.js";
 
 /** @type {import("next").NextConfig} */
 const config = {
   pageExtensions: ["mdx", "jsx", "js", "ts", "tsx"],
   output: "export",
   trailingSlash: true,
-  basePath: "/classes/863.25/people/YufengZhao",
-  assetPrefix: "https://fab.cba.mit.edu/classes/863.25/people/YufengZhao",
+  basePath: env.NEXT_PUBLIC_BASE_PATH,
+  assetPrefix: env.NEXT_PUBLIC_ASSET_PREFIX,
   images: {
     unoptimized: true,
   },

@@ -8,9 +8,7 @@ import {
   redaction50,
 } from "./fonts";
 import { cn } from "@/lib/utils";
-import { baseUrl } from "@/sitemeta";
-import { Suspense } from "react";
-import BackgroundElement from "@/components/three/background-element";
+import { env } from "@/env.js";
 
 export const metadata: Metadata = {
   title: {
@@ -26,10 +24,12 @@ export const metadata: Metadata = {
     "MIT Media Lab",
     "Center for Bits and Atoms",
   ],
-  metadataBase: new URL(baseUrl),
+  metadataBase: env.NEXT_PUBLIC_BASE_URL
+    ? new URL(env.NEXT_PUBLIC_BASE_URL)
+    : undefined,
   openGraph: {
     siteName: "How to Make Almost Anything with Yufeng Zhao",
-    url: baseUrl,
+    url: env.NEXT_PUBLIC_BASE_URL ?? "",
   },
 };
 

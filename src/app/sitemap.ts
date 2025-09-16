@@ -1,15 +1,15 @@
 import { getFilteredProjects } from "@/lib/mdx/project-getter";
-import { baseUrl } from "@/sitemeta";
+import { env } from "@/env.js";
 
 export default async function sitemap() {
   const orderedVisibleProjects = getFilteredProjects({});
   const projects = orderedVisibleProjects.map((project) => ({
-    url: `${baseUrl}/projects/${project.slug}`,
+    url: `${env.NEXT_PUBLIC_BASE_URL}/projects/${project.slug}`,
     lastModified: project.metadata.date,
   }));
 
   const routes = ["", "/featured", "/about"].map((route) => ({
-    url: `${baseUrl}${route}`,
+    url: `${env.NEXT_PUBLIC_BASE_URL}${route}`,
     lastModified: new Date().toISOString().split("T")[0],
   }));
 

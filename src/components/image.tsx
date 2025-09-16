@@ -1,5 +1,5 @@
 import NextImage, { ImageProps } from "next/image";
-import { baseUrl } from "@/sitemeta";
+import { env } from "@/env.js";
 
 export const Image: React.FC<ImageProps> = ({ src, ...rest }) => {
   const normalizedSrc =
@@ -7,12 +7,9 @@ export const Image: React.FC<ImageProps> = ({ src, ...rest }) => {
       ? src.slice(1)
       : (src as string);
 
-  const isDev =
-    typeof process !== "undefined" &&
-    process.env &&
-    process.env.NODE_ENV === "development";
-
-  const finalSrc = isDev ? `/${normalizedSrc}` : `${baseUrl}/${normalizedSrc}`;
+  const finalSrc = env.NEXT_PUBLIC_BASE_URL
+    ? `${env.NEXT_PUBLIC_BASE_URL}/${normalizedSrc}`
+    : `/${normalizedSrc}`;
 
   return <NextImage src={finalSrc} {...rest} />;
 };
