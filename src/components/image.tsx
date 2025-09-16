@@ -8,5 +8,12 @@ export const Image: React.FC<ImageProps> = ({ src, ...rest }) => {
       ? src.slice(1)
       : (src as string);
 
-  return <NextImage src={`${basePath}${normalizedSrc}`} {...rest} />;
+  const isDev =
+    typeof process !== "undefined" &&
+    process.env &&
+    process.env.NODE_ENV === "development";
+
+  const finalSrc = isDev ? `/${normalizedSrc}` : `${basePath}${normalizedSrc}`;
+
+  return <NextImage src={finalSrc} {...rest} />;
 };
