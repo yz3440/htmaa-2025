@@ -36,15 +36,16 @@ jobs:
         uses: actions/setup-node@v4
         with:
           node-version: "22.x"
-      - name: Check out gitlab repo
-        # Customize git clone url here
-        run: |
-          git clone https://YufengZhao:${{ secrets.GITLAB_ACCESS_TOKEN }}@gitlab.cba.mit.edu/classes/863.25/people/YufengZhao.git gitlab-repo
+
       - name: npm
         # Customize build script here
         run: |
           npm install
           npm run build
+      - name: Check out gitlab repo
+        # Customize git clone url here
+        run: |
+          git clone https://YufengZhao:${{ secrets.GITLAB_ACCESS_TOKEN }}@gitlab.cba.mit.edu/classes/863.25/people/YufengZhao.git gitlab-repo
       - name: Push
         # Customize deployment folder here
         run: |
