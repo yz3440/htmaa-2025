@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, useRef, useMemo } from "react";
-import Image from "next/image";
+import { Image } from "@/components/image";
 interface BlurryCursorOverlayProps {
   size?: number;
 }

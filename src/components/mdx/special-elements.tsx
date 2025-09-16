@@ -1,6 +1,6 @@
 import { cn, isImageFile, isVideoFile } from "@/lib/utils";
 import { ZoomableContainer } from "../specialized-ui/zoomable-container";
-import Image from "next/image";
+import { Image } from "@/components/image";
 import ImageWithBlur from "../dynamic/image-with-blur";
 import React from "react";
 import ReactPlayer from "react-player";
