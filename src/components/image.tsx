@@ -1,6 +1,5 @@
 import NextImage, { ImageProps } from "next/image";
-
-const basePath = "https://fab.cba.mit.edu/classes/863.25/people/YufengZhao";
+import { baseUrl } from "@/app/sitemap";
 
 export const Image: React.FC<ImageProps> = ({ src, ...rest }) => {
   const normalizedSrc =
@@ -13,7 +12,7 @@ export const Image: React.FC<ImageProps> = ({ src, ...rest }) => {
     process.env &&
     process.env.NODE_ENV === "development";
 
-  const finalSrc = isDev ? `/${normalizedSrc}` : `${basePath}/${normalizedSrc}`;
+  const finalSrc = isDev ? `/${normalizedSrc}` : `${baseUrl}/${normalizedSrc}`;
 
   return <NextImage src={finalSrc} {...rest} />;
 };
