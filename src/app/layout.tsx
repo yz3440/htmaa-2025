@@ -9,6 +9,8 @@ import {
 } from "./fonts";
 import { cn } from "@/lib/utils";
 import { env } from "@/env.js";
+import BackgroundElement from "@/components/three/background-element";
+import { Suspense } from "react";
 
 export const metadata: Metadata = {
   title: {
@@ -53,9 +55,9 @@ export default function RootLayout({
       <head></head>
       <body className="">
         {children}
-        {/* <Suspense fallback={<div></div>}>
+        <Suspense fallback={<div></div>}>
           <BackgroundElement />
-        </Suspense> */}
+        </Suspense>
       </body>
     </html>
   );

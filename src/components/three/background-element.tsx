@@ -26,14 +26,14 @@ function RotatingSphere() {
 
   useFrame(() => {
     if (sphereRef.current) {
-      sphereRef.current.rotation.y += 0.0005;
-      sphereRef.current.rotation.x += 0.0005;
-      sphereRef.current.rotation.z += 0.0005;
+      sphereRef.current.rotation.y += 0.0002;
+      sphereRef.current.rotation.x += 0.0002;
+      sphereRef.current.rotation.z += 0.0002;
     }
     if (torusRef.current) {
-      torusRef.current.rotation.y -= 0.0005;
-      torusRef.current.rotation.x -= 0.0005;
-      torusRef.current.rotation.z -= 0.0005;
+      torusRef.current.rotation.y -= 0.0002;
+      torusRef.current.rotation.x -= 0.0002;
+      torusRef.current.rotation.z -= 0.0002;
     }
   });
 
@@ -43,7 +43,7 @@ function RotatingSphere() {
         <meshBasicMaterial attach="material" color="#333" wireframe />
       </TorusKnot> */}
       <Sphere ref={sphereRef} args={[10, 12, 12]}>
-        <meshBasicMaterial attach="material" color="#030" wireframe />
+        <meshBasicMaterial attach="material" color="#007700" wireframe />
       </Sphere>
     </group>
   );
@@ -52,15 +52,15 @@ function RotatingSphere() {
 export default function BackgroundElement() {
   const device = useDeviceDetection();
 
-  // if (device === "mobile") {
-  //   return null;
-  // }
+  if (device === "mobile") {
+    return null;
+  }
 
   return (
     <div className="fixed inset-0 left-0 top-0 -z-10 h-dvh w-dvw">
       <Canvas
         gl={{ antialias: false }}
-        dpr={0.4}
+        dpr={0.1}
         camera={{ fov: 160 }}
         className="pointer-events-none"
       >
@@ -68,8 +68,8 @@ export default function BackgroundElement() {
           {/* <RadialBlurEffect blurStart={0.5} blurWidth={0.1} /> */}
           <BlurEffect
             horizontalStrength={0.002}
-            verticalStrength={0.008}
-            level={0.3}
+            verticalStrength={0.1}
+            level={0.4}
           />
           <ChromaticAberration
             blendFunction={BlendFunction.NORMAL}

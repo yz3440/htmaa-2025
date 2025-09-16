@@ -4,7 +4,7 @@ import { InlineLink } from "@/components/ui/inline-link";
 import useCurrentHeadingId from "@/hooks/useCurrentHeadingId";
 import { type TableOfContents } from "@/lib/mdx/parser";
 import { cn } from "@/lib/utils";
-// import Link from "next/link";
+import { Image } from "@/components/image";
 import { Link } from "next-view-transitions";
 import { usePathname } from "next/navigation";
 import { type LayoutContext } from "@/components/layout";
@@ -24,18 +24,14 @@ type NavigationItem = {
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
   {
-    title: "everything",
+    title: "blogs",
     href: "/",
     className: "cursor-zoom-out",
   },
+
   {
-    title: "website",
-    href: "https://yufengzhao.com",
-    className: "cursor-help",
-  },
-  {
-    title: "github",
-    href: "https://github.com/yz3440",
+    title: "site github",
+    href: "https://github.com/yz3440/htmaa-2025",
     className: "cursor-help",
   },
 ];
@@ -60,21 +56,38 @@ export function Navigation({
       {...props}
     >
       <section>
-        <HeadingTag className="font-condensed text-lg font-bold">
+        <HeadingTag className="font-condensed block text-lg font-bold md:hidden">
           <InlineLink href="/" className="no-underline">
             How to Make Almost Anything <br className="hidden md:block" />{" "}
             <span className="font-normal">with</span> Yufeng Zhao
           </InlineLink>
         </HeadingTag>
+        <InlineLink href="/">
+          <Image
+            src="/tv.png"
+            alt="How to Make Almost Anything with Yufeng Zhao"
+            width={100}
+            height={100}
+            className="hidden w-4/5 rounded-lg md:block lg:w-3/5"
+          />
+        </InlineLink>
         <p className="font-condensed mt-2 text-foreground/60">
-          a documentation blog about making things in{" "}
-          <Link
+          a documentation blog about{" "}
+          <InlineLink
+            href="https://yufengzhao.com"
+            target="_blank"
+            className="underline"
+          >
+            Yufeng Zhao
+          </InlineLink>{" "}
+          making things in{" "}
+          <InlineLink
             href="https://fab.cba.mit.edu/classes/MAS.863/"
             target="_blank"
             className="underline"
           >
             HTMAA 2025
-          </Link>
+          </InlineLink>
         </p>
 
         <div className="font-condensed mt-2 grid grid-cols-3 md:grid-cols-1">
@@ -104,6 +117,7 @@ export function Navigation({
           ))}
         </div>
       </section>
+
       {tableOfContents && (
         <ul className="font-condensed mt-2 hidden text-right md:block">
           {tableOfContents
