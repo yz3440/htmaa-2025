@@ -8,7 +8,7 @@ export default async function sitemap() {
     lastModified: project.metadata.date,
   }));
 
-  const routes = ["", "/featured", "/about"].map((route) => ({
+  const routes = [""].map((route) => ({
     url: `${env.NEXT_PUBLIC_BASE_URL}${route}`,
     lastModified: new Date().toISOString().split("T")[0],
   }));

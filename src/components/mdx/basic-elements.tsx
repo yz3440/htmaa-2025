@@ -240,6 +240,27 @@ const CODE = ({
   </code>
 );
 
+const TABLE = ({
+  children,
+}: React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLTableElement>,
+  HTMLTableElement
+>) => <table className="w-full">{children}</table>;
+
+const TD = ({
+  children,
+}: React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLTableCellElement>,
+  HTMLTableCellElement
+>) => <td className="border border-gray-300 p-2">{children}</td>;
+
+const TH = ({
+  children,
+}: React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLTableCellElement>,
+  HTMLTableCellElement
+>) => <th className="border border-gray-300 p-2">{children}</th>;
+
 const basicElements = {
   h1: H1,
   h2: H2,
@@ -256,6 +277,9 @@ const basicElements = {
   img: IMG,
   hr: HR,
   code: CODE,
+  table: TABLE,
+  td: TD,
+  th: TH,
   a: InlineLink,
 };
 

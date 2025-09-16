@@ -340,7 +340,7 @@ function FrontmatterExternalLink({
   return (
     <span className="mr-2">
       <InlineLink href={href} target={shouldTargetBlank ? "_blank" : ""}>
-        <Button size={"sm"} className="group bg-black/30">
+        <Button size={"sm"} variant={"accent"} className="group">
           <div className="flex items-center gap-1">
             {/* <div className="group-hover:animate-spin">{"→"}</div> */}
             <div className="-ml-1">

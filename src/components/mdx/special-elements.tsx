@@ -111,6 +111,7 @@ interface MediaProps extends AutoMediaProps {
   caption?: string;
   widthPercentage?: SupportedWidthPercentage;
   showProgress?: boolean;
+  copyright?: string;
 }
 
 export const Media = ({
@@ -119,6 +120,7 @@ export const Media = ({
   caption,
   showProgress = false,
   widthPercentage = 100,
+  copyright,
   asSpan = true,
   ...props
 }: MediaProps) => {
@@ -143,11 +145,18 @@ export const Media = ({
       >
         {/* give room for hover effect, overflow-hidden to prevent layout shift */}
         <AutoMedia src={src} alt={alt} showProgress={showProgress} {...props} />
-        {caption && (
-          <span className="mt-2 block text-sm font-normal italic text-foreground/80">
-            {caption}
-          </span>
-        )}
+        <div className="mt-2 flex flex-col justify-between md:flex-row md:items-center">
+          {caption && (
+            <span className="block text-sm font-normal italic text-foreground/80">
+              {caption}
+            </span>
+          )}
+          {copyright && (
+            <span className="ml-auto block text-xs font-normal italic text-foreground/80">
+              {copyright && `© ${copyright}`}
+            </span>
+          )}
+        </div>
       </span>
     </Wrapper>
   );
