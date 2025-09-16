@@ -1,0 +1,57 @@
+# Copied from https://github.com/chuanqisun/htmaa-2025/blob/master/.github/workflows/push-to-gitlab.yml
+# Setup
+# =====
+# 1. Go to GitLab, generate a developer acccess token with `write_repository` scope. In the UI, it's in settings > access tokens.
+# 2. Go to GitHub, add that token to your GitHub repo's secrets list
+# 3. In GitLab, relax branch protection policy to allow direct push permission on the `main` branch by your user's role. In my case, the role is `Developer`, not `Maintainer`.
+# 4. Edit this file, replace `SunChuanqi` with your GitLab username in two places, your commiter name and email with yours.
+# 5. Adjust build script and deployment folder to match your static site generator. Mine is `public`.
+
+name: Build and push to GitLab
+
+on:
+  push:
+    branches: ["master"]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: "pages"
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+      - name: Set up Node.js version
+        uses: actions/setup-node@v4
+        with:
+          node-version: "22.x"
+      - name: Check out gitlab repo
+        # Customize git clone url here
+        run: |
+          git clone https://YufengZhao:${{ secrets.GITLAB_ACCESS_TOKEN }}@gitlab.cba.mit.edu/classes/863.25/people/YufengZhao.git public
+      - name: npm
+        # Customize build script here
+        run: |
+          npm install
+          npm run build
+      - name: Push
+        # Customize deployment folder here
+        run: |
+          cd out
+          git config --global user.name "Yufeng, Zhao"
+          git config --global user.email "yufengz@mit.edu"
+          git add .
+          git commit -m "${{ github.event.head_commit.message }}"
+          git status
+          git push origin main
