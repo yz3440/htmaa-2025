@@ -64,7 +64,7 @@ However, I wouldn't say I'm an expert in either of these technologies. I avoided
 
 Well, my limited skills didn't stop me from coming up with bigger ideas, some of which I later found out requires fabrication skills above and beyond the level I would like to learn in a short time. Below is one of them.
 
-## Film projection setup
+## Vannevar Bush's Memex
 
 When I first read Vannevar Bush's [As We May Think](https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/), I found myself already 21-year-old and felt quite uneducated. It turns out the concept of hypertext was invented in 1945, just imagined differently with different technologies: a sophisticated microfilm projection setup.
 
@@ -74,6 +74,8 @@ When I first read Vannevar Bush's [As We May Think](https://www.theatlantic.com/
   caption="Vannevar Bush's concept of Memex as featured in Life Magazine in 1945."
   copyright="Life Magazine"
 />
+
+## A Mechanical Film Projection Web Browser?
 
 Of course, now we have digital hypertext all around us on the [Internet](https://en.wikipedia.org/wiki/Internet), but I like the physicality of the original proposal, especially low-tech solutions are having a comeback in the post-pandemic era. In 2020, I learned about [DIY Perks's DIY projector project in 2020](https://www.youtube.com/watch?v=YfvTjQ9MCwY). Learning all my optics knowledge from Youtube, I think I could build one my version of Memex, starting with a film projection setup.
 
@@ -107,6 +109,14 @@ At the time I was living in Shanghai, so the activation cost for kicking off the
   />
 </GridSection>
 
+Here's a diagram of the setup.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-1/film-projection-diagram.jpg"
+  caption="Diagram of the film projection setup."
+/>
+
 Sadly, this is basically how far I got: an affordable prove-of-concept film projection setup. In order to implement hypertext-like behavior, there are two major challenges.
 
 <GridSection columnCount={2}>
@@ -131,4 +141,29 @@ Sadly, this is basically how far I got: an affordable prove-of-concept film proj
 
 So far there is no electronic component in the setup, which is part of the goal: to make the project as low-tech as possible. If I can do it purely with mechanical components, I wouldn't go electrical. If I have to go electrical, I wouldn't go electronic.
 
-## Mechanical components
+### For scrolling / browsing mechanics
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-1/scroll-diagram.jpg"
+  caption="Diagram of a potential scrolling mechanism."
+/>
+
+For scrolling / browsing mechanics, I'm thinking using clamping the film to a backplate where four corners are attached to a four omni-directional rubber balls. User control the film through a trackball device. And I'm not exactly sure how to connect the trackball device to the scrolling mechanism.
+
+### For hyperlinks, film swapping
+
+I'm thinking using a mechanism similar to a [carousel slide projector](https://en.wikipedia.org/wiki/Carousel_slide_projector) to swap the film. This means the film needs to be relatively small (probbaly microfilm size, which challenges the accuracy of the printing process).
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-1/kodak-carousel-model-4400.png"
+  caption="Kodak Carousel model 4400."
+  copyright="Steve Morgan / Wikimedia Commons"
+/>
+
+Let's imagine we will print out a few pages from Wikipedia that contains hyperlinks that reference each other. Each film would have an index. To implement hyperlinks, the relation between the bounding box (`x`, `y`, `width`, `height`) of the `<a>` tag and the index of the film would be stored somewhere. We also need to encode the scroll position of the film when the user clicks on a hyperlink. When the user clicks on a hyperlink, the film would be swapped to the index of the hyperlink.
+
+## The Plan
+
+My plan is to use each week's assignment as an opportunity to prototype different components of the **Mechanical Film Projection Web Browser**. With the fablab's equipment, I might even try manufacturing my own Fresnel lenses instead of buying them... This way, by the end of the course, I'll have explored various fabrication techniques while steadily building toward this analog hypertext dream. Time to make almost anything!
