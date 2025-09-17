@@ -6,6 +6,7 @@ import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { cn } from "@/lib/utils";
 import { useEffect, useState, useRef, use, useMemo } from "react";
 import { useWindowSize } from "@uidotdev/usehooks";
+import { env } from "@/env.js";
 interface ProjectHeroProps extends React.HTMLAttributes<HTMLDivElement> {
   metadata: ProjectMetadata;
   playVideo?: boolean;
@@ -51,6 +52,15 @@ export function ProjectHero({
     return 1;
   }, [width]);
 
+  const normalizedVideoSrc =
+    typeof metadata.video === "string" && metadata.video.startsWith("/")
+      ? metadata.video.slice(1)
+      : metadata.video;
+
+  const finalVideoSrc = env.NEXT_PUBLIC_BASE_URL
+    ? `${env.NEXT_PUBLIC_BASE_URL}/${normalizedVideoSrc}`
+    : `/${normalizedVideoSrc}`;
+
   return (
     <AspectRatio
       className={cn("relative h-full w-full", props.className)}
@@ -72,7 +82,7 @@ export function ProjectHero({
             loop
             playsInline
           >
-            <source src={metadata.video} type="video/mp4" />
+            <source src={finalVideoSrc} type="video/mp4" />
           </video>
           <Image
             className="pointer-events-none h-full w-full select-none object-cover"
