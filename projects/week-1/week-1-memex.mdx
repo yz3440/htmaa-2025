@@ -60,7 +60,6 @@ However, I wouldn't say I'm an expert in either of these technologies. I avoided
   widthPercentage={50}
   src="/project-assets/week-1/yufeng-tinkercad-2020.jpeg"
   caption="Yufeng's juvenile TinkerCad project in 2020."
-  copyright="Yufeng Zhao"
 />
 
 Well, my limited skills didn't stop me from coming up with bigger ideas, some of which I later found out requires fabrication skills above and beyond the level I would like to learn in a short time. Below is one of them.
@@ -76,7 +75,7 @@ When I first read Vannevar Bush's [As We May Think](https://www.theatlantic.com/
   copyright="Life Magazine"
 />
 
-Of course, now we have digital hypertext all around us on the [Internet](https://en.wikipedia.org/wiki/Internet), but I like the physicality of the original proposal, especially low-tech solutions are having a comeback in the post-pandemic era. In 2020, I learned about [DIY Perks's DIY projector project in 2020](https://www.youtube.com/watch?v=YfvTjQ9MCwY). Learning all my optics knowledge from Youtube, I think I could build one my own.
+Of course, now we have digital hypertext all around us on the [Internet](https://en.wikipedia.org/wiki/Internet), but I like the physicality of the original proposal, especially low-tech solutions are having a comeback in the post-pandemic era. In 2020, I learned about [DIY Perks's DIY projector project in 2020](https://www.youtube.com/watch?v=YfvTjQ9MCwY). Learning all my optics knowledge from Youtube, I think I could build one my version of Memex, starting with a film projection setup.
 
 <Media
   widthPercentage={66}
@@ -85,7 +84,7 @@ Of course, now we have digital hypertext all around us on the [Internet](https:/
   copyright="DIY Perks"
 />
 
-At the time I was living in Shanghai, so the activation cost for kicking off the project was quite low. I sourced all the parts cheaply from Taobao, including:
+At the time I was living in Shanghai, so the activation cost for kicking off the project was quite low. I sourced all the parts cheaply from Taobao.
 
 | Item                                        | Cost             |
 | ------------------------------------------- | ---------------- |
@@ -97,11 +96,39 @@ At the time I was living in Shanghai, so the activation cost for kicking off the
 | Pack of transparent film for laser printing | $8               |
 | Laser printing                              | Free (at school) |
 
-<Media
-  widthPercentage={66}
-  src="/project-assets/week-1/film-projection-202104-1.jpeg"
-  caption="Yufeng's prototype for custom-made film projection setup in 2021."
-  copyright="Yufeng Zhao"
-/>
+<GridSection columnCount={2}>
+  <Media
+    src="/project-assets/week-1/film-projection-202104-1.jpeg"
+    caption="Yufeng's prototype for custom-made film projection setup, projecting 'As We May Think' in 2021."
+  />
+  <Media
+    src="/project-assets/week-1/film-projection-202104-2.jpeg"
+    caption="Yufeng's prototype for custom-made film projection setup in 2021."
+  />
+</GridSection>
 
-## A possible final project?
+Sadly, this is basically how far I got: an affordable prove-of-concept film projection setup. In order to implement hypertext-like behavior, there are two major challenges.
+
+<GridSection columnCount={2}>
+  <BulletPoint
+    emoji="🖱️"
+    title="Scrolling / browsing mechanics"
+    bgColor="#ED778D"
+    textColor="#000000"
+  >
+    What mechanics are needed for navigating through the entire document on the
+    film?
+  </BulletPoint>
+  <BulletPoint
+    emoji="🔗"
+    title="Hyperlinks, film swapping"
+    bgColor="#EDFF8D"
+    textColor="#000000"
+  >
+    How to register clicks on hyperlinks and swap to a different film?
+  </BulletPoint>
+</GridSection>
+
+So far there is no electronic component in the setup, which is part of the goal: to make the project as low-tech as possible. If I can do it purely with mechanical components, I wouldn't go electrical. If I have to go electrical, I wouldn't go electronic.
+
+## Mechanical components

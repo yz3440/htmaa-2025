@@ -70,6 +70,7 @@ const components = {
   tbody: basicElements.tbody,
   td: basicElements.td,
   th: basicElements.th,
+  pre: basicElements.pre,
   code: basicElements.code,
   // Image: RoundedImage,
   a: basicElements.a as React.ElementType,

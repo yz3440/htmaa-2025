@@ -2,6 +2,8 @@ import { cn, slugify } from "@/lib/utils";
 import { Media, UnwrapParagraph } from "./special-elements";
 import { Separator } from "../ui/separator";
 import { InlineLink } from "../ui/inline-link";
+import SyntaxHighlighter from "react-syntax-highlighter";
+import { github } from "react-syntax-highlighter/dist/esm/styles/hljs";
 
 // Helper function to safely convert React children to string
 const childrenToString = (children: React.ReactNode): string => {
@@ -232,13 +234,71 @@ const IMG = ({
 
 const HR = () => <Separator className="my-4"></Separator>;
 
+const PRE = ({
+  children,
+}: React.DetailedHTMLProps<
+  React.HTMLAttributes<HTMLPreElement>,
+  HTMLPreElement
+>) => {
+  return children;
+};
+
 const CODE = ({
   children,
-}: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>) => (
-  <code className="rounded-md bg-primary-foreground/50 px-1 py-0.5 font-mono text-foreground/80">
-    {children}
-  </code>
-);
+  className,
+}: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>) => {
+  const language = className?.split("language-")[1];
+  const CustomCode = (
+    props: React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLElement>,
+      HTMLElement
+    >,
+  ) => (
+    <code
+      className={cn(
+        props.className,
+        "px-1 py-0.5 font-mono text-foreground/80",
+      )}
+      {...props}
+    />
+  );
+
+  const CustomPre = (
+    props: React.DetailedHTMLProps<
+      React.HTMLAttributes<HTMLPreElement>,
+      HTMLPreElement
+    >,
+  ) => (
+    <pre
+      id="customPreTag"
+      {...props}
+      className={cn(
+        props.className,
+        "mb-4 max-h-64 overflow-x-auto rounded-md !bg-primary-foreground/50 px-2 py-1",
+      )}
+    />
+  );
+
+  if (language) {
+    return (
+      <SyntaxHighlighter
+        language={language}
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+        style={github}
+        CodeTag={CustomCode}
+        PreTag={CustomPre}
+      >
+        {childrenToString(children)}
+      </SyntaxHighlighter>
+    );
+  }
+
+  return (
+    <CustomCode className="rounded-md bg-primary-foreground/50 px-1 py-0.5 font-mono">
+      {childrenToString(children)}
+    </CustomCode>
+  );
+};
 
 const TABLE = ({
   children,
@@ -298,6 +358,7 @@ const basicElements = {
   strong: STRONG,
   img: IMG,
   hr: HR,
+  pre: PRE,
   code: CODE,
   table: TABLE,
   thead: THEAD,

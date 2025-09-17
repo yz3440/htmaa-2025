@@ -1,0 +1,184 @@
+---
+title: "Making this website"
+categories: ["web development"]
+displayedCategory: "web development"
+date: "2025-09-16"
+year: 2025
+displayedDate: "Week 2"
+
+description: "Wrangling my existing Next.js Static Site Generator with MDX component library to work on CBA's self-hosted GitLab."
+
+shortDescription: "requires migrating my existing blog system to self-hosted GitLab"
+
+tags:
+  - web development
+  - next.js
+  - mdx
+  - github actions
+  - gitlab
+
+externalLink: null
+videoLink: null
+
+githubLink: https://github.com/yz3440/htmaa-2025
+
+pressLinks: []
+
+publicationLinks: []
+
+priority: 2
+
+roles: []
+
+collaborators: []
+
+image: "/project-assets/week-2/week-2-website/hero.jpg"
+video: null
+
+visible: true
+featured: false
+
+tableOfContents: true
+---
+
+## Assignment
+
+- make the website for CBA's self-hosted GitLab
+
+## Where we started
+
+Well, all of us in the HTMAA class started with an blank site on the GitLab repo, deployed by a GitLab CI job to pull the repository into a Nginx server.
+
+```yml
+# .gitlab-ci.yml
+
+job:
+  script:
+    - mkdir -p /var/www/classes/863.25/people/YufengZhao
+    - export GIT_WORK_TREE=/var/www/classes/863.25/people/YufengZhao/
+    - git checkout -f main
+    - git pull
+```
+
+However, this doesn't include a build step, which is required for a static site generator. Because I really don't want to write raw HTML and CSS for this type of blog site, I decided to find a workaround.
+
+## Site Genration on CBA's GitLab
+
+In 2024, I spent a lot of time to make my personal website easier to maintain. I ended up building a MDX component library powered by a Next.js Static Site Generator (SSG). The Content Management System (CMS) is just a simple GitLab repository.
+
+<Media
+  src="/project-assets/week-2/week-2-website/yufeng-zhao-com.jpg"
+  caption="Yufeng's personal website as of Sep 2025."
+/>
+
+I think it looks pretty sweet, and I'm quite used to writing my custom MDX syntax. The first thing I did was to copy the entire repository and modify it to fit the CBA's GitLab. In order to make it work, I had to modify the CI job to build the website.
+
+```yml
+# .gitlab-ci.yml, modified
+stages:
+  - build
+  - deploy
+
+variables:
+  BUN_VERSION: "latest"
+
+build:
+  stage: build
+  cache:
+    paths:
+      - ~/.bun/install/cache/
+      - node_modules/
+      - .next/cache/
+  before_script:
+    # Install Bun
+    - curl -fsSL https://bun.sh/install | bash
+    # Add Bun to PATH for current session
+    - export PATH="$HOME/.bun/bin:$PATH"
+    # Verify installation
+    - bun --version
+  script:
+    - export PATH="$HOME/.bun/bin:$PATH"
+    - bun install
+    - bun run build
+  artifacts:
+    paths:
+      - out/
+    expire_in: 1 hour
+  only:
+    - main
+
+deploy:
+  stage: deploy
+  dependencies:
+    - build
+  script:
+    - mkdir -p /var/www/classes/863.25/people/YufengZhao
+    - rm -rf /var/www/classes/863.25/people/YufengZhao/*
+    - cp -r out/* /var/www/classes/863.25/people/YufengZhao/
+  only:
+    - main
+```
+
+I chose to install [Bun](https://bun.sh/) on the CI runner to build my Next.js website. However, the [pipeline job](https://gitlab.cba.mit.edu/classes/863.25/people/YufengZhao/-/pipelines/48261) not only failed but also froze the entire GitLab server for about 30 minutes (thank god I was doing it during midnight). I realized the GitLab server is probably quite slow, so I immediately reverted the CI configuration.
+
+## Separation of Source Code and Output
+
+Thankfully, I'm not the only person who has this problem. My classmate [Sun Chuanqi's](https://fab.cba.mit.edu/classes/863.25/people/SunChuanqi/) decided to separate the source code and the output. Here's a summary of his approach:
+
+<GridSection>
+  <BulletPoint
+    emoji="🔗"
+    title="Source code"
+    bgColor="#ED778D"
+    textColor="#000000"
+  >
+    Sun moved his source code to Github, which is faster than CBA's GitLab.
+  </BulletPoint>
+  <BulletPoint
+    emoji="🔨"
+    title="Building and Deploying Output"
+    bgColor="#EDFF8D"
+    textColor="#000000"
+  >
+    Using Github Action to build the site and commit the output to the GitLab
+    repository.
+  </BulletPoint>
+</GridSection>
+
+This is his [repository](https://github.com/chuanqisun/htmaa-2025/), and here's the [Github Action](https://github.com/chuanqisun/htmaa-2025/blob/master/.github/workflows/push-to-gitlab.yml). As written in Sun's instruction, in order for the Github Action to work, I had to add the GitLab access token to the Github repository's secrets, and relax the branch protection policy to allow direct push permission on the `main` branch. Here's the screenshots of how to do them:
+
+### Getting the GitLab access token
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-2/week-2-website/gitlab-access-token-instruction.jpg"
+  caption="Getting the GitLab access token."
+/>
+
+### Relaxing the branch protection policy
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-2/week-2-website/gitlab-branch-protection-relax.jpg"
+  caption="Relaxing the branch protection policy."
+/>
+
+### Adding the GitLab access token to the Github repository's secrets
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-2/week-2-website/github-action-secret-instruction.jpg"
+  caption="Adding the GitLab access token to the Github repository's secrets."
+/>
+
+## Deployed!
+
+Boom! Now when you commit to your Github repository, `npm run build` will be run automatically, and the output folder will be committed to the root of the GitLab repository.
+
+The source code for my website is [here](https://github.com/yz3440/htmaa-2025/), and the output GitLab repository is [here](https://gitlab.cba.mit.edu/classes/863.25/people/YufengZhao/), and the website is [here](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/).
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-2/week-2-website/htmaa-yufeng-zhao.png"
+  caption="How to Make Almost Anything with Yufeng Zhao website looks quite similar to my personal website :)"
+/>
