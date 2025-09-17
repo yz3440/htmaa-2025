@@ -24,7 +24,7 @@ type NavigationItem = {
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
   {
-    title: "blogs",
+    title: "projects",
     href: "/",
     className: "cursor-zoom-out",
   },
