@@ -1,6 +1,7 @@
 "use client";
 import React, { useRef, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
+import { env } from "@/env.js";
 
 interface AutoMediaVideoProps {
   src: string;
@@ -29,6 +30,13 @@ export const AutoMediaVideo = ({
     return () => video.removeEventListener("timeupdate", updateProgress);
   }, []);
 
+  const normalizedSrc =
+    typeof src === "string" && src.startsWith("/") ? src.slice(1) : src;
+
+  const finalSrc = env.NEXT_PUBLIC_BASE_URL
+    ? `${env.NEXT_PUBLIC_BASE_URL}/${normalizedSrc}`
+    : `/${normalizedSrc}`;
+
   return (
     <div className={cn("relative w-full", className)}>
       <video
@@ -39,7 +47,7 @@ export const AutoMediaVideo = ({
         loop
         muted
       >
-        <source src={src} type="video/mp4" />
+        <source src={finalSrc} type="video/mp4" />
       </video>
       {showProgress && (
         <div className="absolute bottom-0 left-0 h-1 w-full bg-background/20">
