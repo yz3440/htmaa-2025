@@ -24,11 +24,15 @@ type NavigationItem = {
 
 const NAVIGATION_ITEMS: NavigationItem[] = [
   {
-    title: "projects",
+    title: "weekly assignments",
     href: "/",
     className: "cursor-zoom-out",
   },
-
+  {
+    title: "final project",
+    href: "/final-project/",
+    className: "cursor-zoom-in",
+  },
   {
     title: "site github",
     href: "https://github.com/yz3440/htmaa-2025",

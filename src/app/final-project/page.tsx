@@ -6,7 +6,7 @@ export const revalidate = 3600;
 
 export default function Home() {
   const orderedVisibleProjects = getFilteredProjects({
-    categories: ["weekly assignment"],
+    categories: ["final project"],
   });
 
   return (
