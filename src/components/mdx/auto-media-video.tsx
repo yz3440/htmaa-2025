@@ -52,8 +52,11 @@ export const AutoMediaVideo = ({
       {showProgress && (
         <div className="absolute bottom-0 left-0 h-1 w-full bg-background/20">
           <div
-            className="white-glow-lg h-full bg-foreground/50 transition-all duration-500"
-            style={{ width: `${progress}%` }}
+            className={cn(
+              "white-glow-lg h-full bg-foreground/50 transition-all ease-linear",
+              progress < 1 ? "duration-0" : "duration-500",
+            )}
+            style={{ width: `${(progress * 10) / 9}%` }}
           />
         </div>
       )}

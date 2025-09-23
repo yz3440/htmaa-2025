@@ -61,7 +61,7 @@ interface AutoMediaProps {
 const AutoMedia = ({
   src,
   alt,
-  showProgress = false,
+  showProgress = true,
   noGlow = false,
   noZoom = false,
   className,
@@ -118,7 +118,7 @@ export const Media = ({
   src,
   alt,
   caption,
-  showProgress = false,
+  showProgress = true,
   widthPercentage = 100,
   copyright,
   asSpan = true,
