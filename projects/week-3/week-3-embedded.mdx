@@ -1,0 +1,260 @@
+---
+title: "Programming an Embedded System"
+categories: ["weekly assignment"]
+displayedCategory: "Arduino time!"
+date: "2025-09-23"
+year: 2025
+displayedDate: "Week 3"
+
+description: "Writing and testing a program for an embedded system using a microcontroller to interact (with local input &/or output devices) and communicate (with remote wired or wireless connections)."
+
+shortDescription: "made out of cardboards and assembles easily."
+
+tags:
+  - arduino
+  - embedded system
+  - microcontroller
+  - rp2040
+
+externalLink: null
+videoLink: null
+
+pressLinks: []
+
+publicationLinks: []
+
+priority: 2
+
+roles: []
+
+collaborators: []
+
+image: "/project-assets/week-3/week-3-embedded/hero.jpeg"
+video: "/project-assets/week-3/week-3-embedded/hero.mp4"
+
+visible: true
+featured: false
+
+tableOfContents: true
+---
+
+## Assignment
+
+- demonstrate and compare the toolchains and development workflows for available embedded architectures
+- browse through the data sheet for a microcontroller
+- write and test a program for an embedded system using a microcontroller to interact (with local input &/or output devices) and communicate (with remote wired or wireless connections)
+- extra credit: try different languages &/or development environments
+
+## The Board
+
+The board I got from the TAs (thanks to Alan and Quentin for helping during late hours!) is the Seeed Studio XIAO RP2040. It already came soldered with a USB-C port, a 128x64 OLED display, and onto a PCB board (QPAD) with 6 contact pads into the board.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-3/week-3-embedded/board-1.jpeg"
+  caption={`The Seeed Studio XIAO RP2040 board, came with a "Hello" message on the OLED display`}
+/>
+
+## Setting up Toolchain environment
+
+The only info I have about the board is that it says "Seeed XIAO RP2040" on the board. I googled around and found [the datasheet]](https://files.seeedstudio.com/wiki/XIAO-RP2040/res/rp2040_datasheet.pdf) on SeeedStudio's website.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-3/week-3-embedded/datasheet-screenshot.png"
+  caption={`Screenshot of the datasheet PDF, it has 646 pages`}
+/>
+
+It's a 646 pages long PDF and I probably don't need to read it all. The second best resource I found is [this guide](https://mjrovai.github.io/XIAO_Big_Power_Small_Board-ebook/) published by Marcelo Rovai.
+
+### Setting up Arduino IDE
+
+In the [first chapter](https://mjrovai.github.io/XIAO_Big_Power_Small_Board-ebook/chapter_1-1.html) of the guide, it mentions how to set up the Arduino IDE to program the board. First, I need to add this [URL](https://github.com/earlephilhower/arduino-pico/releases/download/global/package_rp2040_index.json) as an "Additional Boards Manager URLs" in the Arduino IDE.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-3/week-3-embedded/arduino-url-screenshot.png"
+  caption={`Adding an additional URL to the Arduino IDE (Arduino IDE > Settings)`}
+/>
+
+Then, when I open the "Tools > Board > Boards Manager", I can see the "RP2040 Boards" in the list, and clicked "Install". After that, the board module is available in the "Tools > Board" menu. After setting the port to the correct one, I think I'm ready to start programming the board.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-3/week-3-embedded/arduino-board-screenshot.png"
+  caption={`Correct board & port settings before programming`}
+/>
+
+### Setting up VS Code + PlatformIO
+
+I've heard good things about VS Code + PlatformIO, which allows me to stay in the familiar VSCode ecosystem and leverage some of the AI capabilities. I found a [good guide](https://docs.platformio.org/en/latest/platforms/raspberrypi.html) on how to set it up from PlatformIO's website for specidically RP2040.
+
+After I installed `PlatformIO` on VS Code, the following steps are setting up the project files. According to the guide, it seems like I needed a `platformio.ini` file to tell PlatformIO what to do. The guide is not showing the exactly RP2040 setup, so I consulted Claude Sonnet 4 (Reasoning) with the prompt.
+
+```
+help me setup a platform io project in vscode for Seeed XIAO RP2040
+```
+
+It advised me to "Open PlatformIO Home" (search in the command palette by pressing `Ctrl/Cmd+Shift+P`) and click "New Project".
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-3/week-3-embedded/platformio-home-screenshot.png"
+  caption={`Open PlatformIO Home and click "New Project"`}
+/>
+
+For the board type, I tried to find "RP2040" in the list, and the closest thing I found is "Arduino Nano RP2040 Connect". The more `Seeed XIAO` related options only has `SAMD` and `ESP32` options.
+
+<GridSection columnCount={2}>
+<Media
+  src="/project-assets/week-3/week-3-embedded/platformio-board-type-1.png"
+  caption={`Click "Arduino Nano RP2040 Connect" in PlatformIO Home`}
+/>
+
+<Media
+  src="/project-assets/week-3/week-3-embedded/platformio-board-type-2.png"
+  caption={`"Seeed XIAO" options are SAMD and ESP32 only`}
+/>
+</GridSection>
+
+After initializing the project, I can see the `platformio.ini` file is created. Right off the bat, I went straight to trying to upload the default empty program to the board. Not too surprisingly, it failed, because essentially my board (Seeed XIAO RP2040) is not on the list of supported boards.
+
+<Media
+  src="/project-assets/week-3/week-3-embedded/platform-upload-failure.png"
+  caption={`Upload failed because the board is not on the list of supported boards`}
+/>
+
+Given this, I decided to go forward with the Arduino IDE, and set up the board as described in the previous section.
+
+## Testing the OLED Display
+
+For most of my initial exploration, I completely missed out the [examples](https://gitlab.cba.mit.edu/quentinbolsee/qpad-xiao/-/tree/main/code) that Quentin provided. I saw the GitLab repo and the website, but I didn't pay attention to the `code` folder.
+
+Following [Chapter 1.6 of the guide by Marcelo Rovai](https://mjrovai.github.io/XIAO_Big_Power_Small_Board-ebook/chapter_1-6.html), I was able to get the board to display "Hello" on the OLED display. I [downloaded](https://github.com/olikraus/u8g2_arduino) and installed the U8g2 library, and flashed on of the exmaples, named `GraphicsTest.ino`. The only thing I have to modify in this example is to set the `U8X8` declaration by uncommenting the following line ([as stated in the guide](https://mjrovai.github.io/XIAO_Big_Power_Small_Board-ebook/chapter_1-6.html#write-the-program)):
+
+```cpp
+U8X8_SSD1306_128X64_NONAME_HW_I2C u8x8(/* reset=*/ U8X8_PIN_NONE);
+```
+
+<Media
+  src="/project-assets/week-3/week-3-embedded/u8g2-graphics-test.mp4"
+  caption={`The "GraphicsTest.ino" example from the U8g2 library`}
+/>
+
+## Testing the Touch Pads
+
+This was the most confusing part. Without Quentin's examples, I went on researching how to implement capacitive touch sensing on RP2040. Because according to the pin definition, the 6 QPAD touch pads are connected to the `P1`, `P2`, `P3`, `P4`, `P26`, and `P27` pins.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-3/week-3-embedded/seeed-rp2040-pins.jpg"
+  caption={`The pin definition of the Seeed Studio XIAO RP2040`}
+  copyright="Seeed Studio"
+/>
+
+I was very confused how to utilize these pins to detect touch events, since, unlike SAMD, the RP2040 does not have a built-in Peripheral Touch Controller (PTC). I was looking around for random libararies, such as the `Adafruit_FreeTouch`, `CapacitiveSensor` libraries, but none worked.
+
+In the end, I successfully bricked my board by flashing one of the randome sketches I co-conspired with ChatGPT. The board wouldn't show up in the port list in the Arduino IDE. I tried to follow [this guide](https://wiki.seeedstudio.com/XIAO-RP2040/#reset) on Seeed Studio's website to reset the board by reconnecting the cable while pressing the reset button. It didn't work either.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-3/week-3-embedded/seeed-rp2040-buttons.jpg"
+  caption={`The button definitions on the board`}
+  copyright="Seeed Studio"
+/>
+
+After countless failed attempts, I reached out to Quentin for help. He told me to properly reset this exact board, the correct steps are:
+
+- Plug in the board
+- Keep the BOOT button pressed
+- Press and release the reset button
+
+The board then goes to UF2 mode, where it shows up as a USB storage device.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-3/week-3-embedded/seeed-rp2040-uf2-mode-usb-storage.png"
+  caption={`The board in UF2 mode, showing up as a USB storage device`}
+/>
+
+It also shows up in the "Port" menu in the Arduino IDE, as a "UF2 Board".
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-3/week-3-embedded/uf2-board-in-port.jpeg"
+  caption={`Board shows up in the "Port" menu in the Arduino IDE, as a "UF2 Board"`}
+/>
+
+Then, I copied over Quentin's [`test_touch_RP2040.ino`](https://gitlab.cba.mit.edu/quentinbolsee/qpad-xiao/-/blob/main/code/Arduino/test_touch_RP2040/test_touch_RP2040.ino) example to the board. It successfully flashed, however, the board wouldn't respond to the touch events.
+
+After some debugging with Quentin, we decided to remove these two lines to make it work:
+
+```c
+noInterrupts();
+// some other code
+interrupts();
+```
+
+Back to the example touchpad code itself, Quentin obviously performed some neat tricks to make RP2040, with no PTC, to detect touch events.
+
+At earch cycle, first we reset all the pins to `LOW`. After some delay to make the voltage settle, we enable `INPUT_PULLUP` on the pins, to allow the pins to slowly charge up. Then, we set the pins to `HIGH` for a short period of time, to detect the capacitance of the pins. After that, we will be measuring the time it takes for the pins to charge up. It takes too long to charge up, it means that something is touching the pins, probably a finger.
+
+```c
+// from test_touch_RP2040.ino
+void update_touch() {
+  int t;
+  int t_max = 200;
+  int p;
+
+  for (int i = 0; i < N_TOUCH; i++) {
+    p = touch_pins[i];
+
+    // set to low
+    pinMode(p, OUTPUT);
+    digitalWriteFast(p, LOW);
+
+    // settle
+    delayMicroseconds(25);
+
+    // make sure nothing else interrupts this
+    //noInterrupts();
+
+    // enable pull-up
+    pinMode(p, INPUT_PULLUP);
+
+    // measure time to rise
+    t = 0;
+    while (!digitalReadFast(p) && t < t_max) {
+      t++;
+    }
+    touch_values[i] = t;
+
+    // re-enable interrups
+    //interrupts();
+
+    // update state
+    pin_touched_past[i] = pin_touched_now[i];
+    pin_touched_now[i] = touch_values[i] > THRESHOLD;
+  }
+}
+```
+
+This explains why this particular example is hard to find online: because it's not a common use case for RP2040. It's also only possible for a relatively fast microcontroller, because the time it takes for the pins to charge up is relatively short, therefore hard to detect with a slow microcontroller.
+
+<Media
+  src="/project-assets/week-3/week-3-embedded/qpad-working.mp4"
+  caption={`The QPAD working with the touch pads`}
+/>
+
+## Finally, the assignment
+
+I decided to implement a program to make the board a HID keyboard, which propogate the source code of the program itself, when the user press the `START` key.
+
+TO BE CONTINUED...
+
+## References
+
+- [Getting Started with Seeed Studio XIAO RP2040](https://wiki.seeedstudio.com/XIAO-RP2040/)
+- [XIAO: Big Power, Small Board: Mastering Arduino and TinyML](https://mjrovai.github.io/XIAO_Big_Power_Small_Board-ebook/)
+- [U8g2 display library](https://github.com/olikraus/u8g2_arduino)
+- [Quentin's QPAD example code](https://gitlab.cba.mit.edu/quentinbolsee/qpad-xiao/-/tree/main/code)
