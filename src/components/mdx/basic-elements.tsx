@@ -257,7 +257,7 @@ const CODE = ({
     <code
       className={cn(
         props.className,
-        "px-1 py-0.5 font-mono text-foreground/80",
+        "px-1 py-0.5 font-mono text-sm text-foreground/80",
       )}
       {...props}
     />
@@ -274,7 +274,7 @@ const CODE = ({
       {...props}
       className={cn(
         props.className,
-        "mb-4 max-h-64 overflow-x-auto rounded-md !bg-primary-foreground/50 px-2 py-1",
+        "mb-4 max-h-64 overflow-x-auto rounded-md !bg-primary-foreground/50 px-2 py-1 text-sm",
       )}
     />
   );
@@ -294,7 +294,7 @@ const CODE = ({
   }
 
   return (
-    <CustomCode className="rounded-md bg-primary-foreground/50 px-1 py-0.5 font-mono">
+    <CustomCode className="rounded-md bg-primary-foreground/50 px-1 py-0.5 font-mono text-sm">
       {childrenToString(children)}
     </CustomCode>
   );
