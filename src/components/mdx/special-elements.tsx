@@ -274,12 +274,83 @@ const BulletPoint = ({
   );
 };
 
+interface IFrameProps {
+  caption?: string;
+  originalUrl?: string;
+  hostedPlatform?: string;
+  embedUrl: string;
+  widthPercentage?: SupportedWidthPercentage;
+  height?: number;
+  className?: string;
+}
+
+const IFrame = ({
+  caption,
+  originalUrl,
+  hostedPlatform,
+  embedUrl,
+  widthPercentage = 100,
+  height = 400,
+  className,
+}: IFrameProps) => {
+  return (
+    <div className={cn("mb-6 w-full", className)}>
+      <div
+        className={cn(
+          "relative overflow-hidden rounded-lg border border-border/20",
+          "transition-all duration-500 hover:shadow-lg",
+        )}
+        style={{
+          width: widthPercentage
+            ? getTailwindWidthClass(widthPercentage)
+            : "100%",
+          height,
+        }}
+      >
+        <iframe
+          src={embedUrl}
+          width="100%"
+          height="100%"
+          allowFullScreen
+          className="absolute inset-0"
+          title={caption ?? "Embedded content"}
+        />
+      </div>
+
+      {/* Caption and metadata */}
+      <div className="mt-2 flex flex-col justify-between md:flex-row md:items-center">
+        {caption && (
+          <span className="block text-sm font-normal italic text-foreground/80">
+            {caption}
+          </span>
+        )}
+        <div className="flex flex-col text-xs text-foreground/60 md:ml-auto md:text-right">
+          {hostedPlatform && (
+            <span className="font-medium">Hosted on {hostedPlatform}</span>
+          )}
+          {originalUrl && (
+            <a
+              href={originalUrl}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="underline transition-colors hover:text-foreground/80"
+            >
+              View original
+            </a>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
+
 export const specialElements = {
   SubHeading,
   Media,
   MediaTextSection,
   BulletPoint,
   GLBViewer,
+  IFrame,
 };
 
 //

@@ -47,7 +47,7 @@ const GLBLoader = () => (
 
 interface GLBViewerProps {
   src: string;
-  width?: number | string;
+  width?: number;
   height?: number;
   autoRotate?: boolean;
   showEnvironment?: boolean;
