@@ -1,10 +1,9 @@
 import { cn, isImageFile, isVideoFile } from "@/lib/utils";
 import { ZoomableContainer } from "../specialized-ui/zoomable-container";
 import { Image } from "@/components/image";
-import ImageWithBlur from "../dynamic/image-with-blur";
 import React from "react";
-import ReactPlayer from "react-player";
 import { AutoMediaVideo } from "./auto-media-video";
+import { GLBViewer } from "./glb-viewer";
 
 type SupportedWidthPercentage = 50 | 33 | 25 | 100 | 66 | 75;
 
@@ -280,6 +279,7 @@ export const specialElements = {
   Media,
   MediaTextSection,
   BulletPoint,
+  GLBViewer,
 };
 
 //

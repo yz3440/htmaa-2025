@@ -82,6 +82,7 @@ const components = {
   GridSection: GridSection,
   BulletPoint: specialElements.BulletPoint,
   CarouselSection: CarouselSection,
+  GLBViewer: specialElements.GLBViewer,
 };
 
 // https://github.com/mdx-js/mdx/blob/v1/packages/mdx/index.js
