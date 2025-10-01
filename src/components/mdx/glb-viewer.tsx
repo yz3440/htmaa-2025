@@ -73,6 +73,7 @@ export const GLBViewer = ({
       className={cn(
         "relative mb-4 w-full overflow-hidden rounded-lg border border-border/20",
         "transition-all duration-500 hover:shadow-lg",
+        "mx-auto",
         className,
       )}
       style={{ width: width ?? "100%", height }}

@@ -58,11 +58,9 @@ The problem is that we didn't figure out a way to gracefully mount triangle shee
 
 I want the triangle to slide into potentially some slit on the beam to stay in place. The width of the slit needs to be very very thin, paper thin. Another thing I want to keep about the previous prototype is that we try to make each part as transparent as possible: the joint connectors are printed with PETG Clear filament, and the beams are just clear acrylic rods. SLA resin printing just felt like a perfect thing to try to get both fine details and transparency.
 
-## Modeling in Fusion 360
+## Modeling the Rod
 
 Along the process, I made so many iterations of the design, a few are because of the difference precision and tolerance of the different printing materials and processes. I'm glad that I started off with everything parametrically so that I have a lot of flexibility to tweak the design later on.
-
-### Rod Design
 
 <GridSection columnCount={2}>
   <Media
@@ -91,7 +89,7 @@ Here's the parameters for the rod model.
 | slit_width        | 0.8 mm     |
 | slit_length       | 1.2 mm     |
 
-### Printing rods
+## Printing the Rod
 
 I'm using Formlab Form 4 with Clear V5 material. I asked Dan to give me a walkthrough of the printing process and [Ceci](https://fab.cba.mit.edu/classes/863.25/people/CeciliaMarsicovetereFanjul/) helped me a lot with her fabrication knowledge. Here are the steps I followed:
 
@@ -114,21 +112,21 @@ I'm using Formlab Form 4 with Clear V5 material. I asked Dan to give me a walkth
   />
 </GridSection>
 
-I started printing the first batch of rods, along with some connectors (modeled by Shuang Cai in June 2025). Shuang sent me an STL file, and the exact dimensions is not captured in the file. I had to manually set the scale to be roughly correct (0.118x scale of the original STL).
+I started printing the first batch of rods. Here's the setting for the print.
+
+!INSERT IMAGE!
+
+In the same batch, I also printed some connectors (modeled by Shuang Cai in June 2025). I noticed the print time doesn not increase much when addinbg the connectors in because the SLA printing uses exposure and only the maximum height would affect the print time. Shuang sent me an STL file, and the exact dimensions is not captured in the file. I had to manually set the scale to be roughly correct (0.118x scale of the original STL).
 
 <GLBViewer
+  width="50%"
   src="/project-assets/week-4/week-4-3d-print/june_2025_icosahedron_joint_printable.glb"
   caption="The rod connectors modeled by Shuang Cai in June 2025"
   cameraPosition={[0, 60, 200]}
   backgroundColor="black"
 />
 
-<Media
-  src="/project-assets/week-4/week-4-3d-print/rod-sidelook.png"
-  caption="The side look of the rod, with a tiny slit on the face"
-/>
-
-The connectors ended up too big for the rods to fit into. At this point, I felt the necessity to remodel the connectors.
+Here's my first print with SLA resin.
 
 <Media
   widthPercentage={66}
@@ -136,20 +134,86 @@ The connectors ended up too big for the rods to fit into. At this point, I felt 
   caption="First print with SLA resin"
 />
 
+The side of the rode looks very nice and slit is very defined and definitely
+fits a piece of paper.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/rod-sidelook.png"
+  caption="The side look of the rod, with a tiny slit on the face"
+/>
+
+However, the connectors ended up too big for the rods to fit into. At this point, I felt the necessity to remodel the connectors, because I want full control over the design, specifically the dimensions.
+
+!INSERT IMAGE FOR THE ABOVE!
+
+Another thing I noticed is that the true diameter of the rod is slightly larger than the designed diameter (3.175 mm). It reads on the caliper as 3.31 mm. I didn't want to change the rod design, so I'll compensate for the difference in the connector design.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/rod-true-diameter.jpeg"
+  caption="The true diameter of the rod is slightly larger than the designed diameter"
+/>
+
+## Modeling the Connector
+
+I didn't know exactly how to model the conenctor because the angle of each tube on the conenctor is quite tricky, as mentioned in [Week 2 assignment](../week-2-laser-cutting-an-icosahedron-kit/). I found [a video on YouTube](https://www.youtube.com/watch?v=3u4gauB2pcA&t=66s) that shows how to model an icosahedron (not the connector) in Fusion 360. And I learned the core skill of 3D Sketching in Fusion. I was able to acquire the mathmetically accurate angle for each tube by setting up geometry constraints.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/conenctor-sketch.png"
+  caption="Sketch of the angle of the connector tubes"
+/>
+
+Currently the tube is in a line form. To make it into a 3D body, I used the "Pipe" tool to make a cylinder along that line.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/connector-body-1.png"
+  caption="Line -> Cylinder; Pentagon -> Pentagon Block"
+/>
+
+I then copied over the rod face sketch to the face of the tube to push in on the cylinder and make a hole.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/connector-tube-face-sketch.png"
+  caption="Copy over the rod face sketch to the face of the tube"
+/>
+
+Having learned that the material turns out bigger after printing, I also made a few variables for tolearnce clearance and subtracted the numbers from the inner diameter of the tube and the slit width. This is why the diameter of the shape is 3.375 mm instaed of 3.175 mm.
+
+Then I run a circular pattern for the tube to create the other four, merged the tubes with the pentagon block, and then fillet all the edges to make to smoothy and nice.
+
 <Media
   src="/project-assets/week-4/week-4-3d-print/rod-connector-design-1.png"
-  caption="Sketch of the rod connector"
+  caption="Finished model of the rod and the connector"
 />
+
+I also learned how to render the model in Fusion 360. I applied the clear acrylic material to both parts.
 
 <Media
   src="/project-assets/week-4/week-4-3d-print/fusion-render.png"
   caption="Rendered view of the rod connector"
 />
 
+## Printing the Connector
+
+I'm still worried about the clearance of the connector, given how rigid the resin material is. That's why I'm trying FDM printing with both PETG and PLA filaments.
+
+!INSERT FIVE FAILURE STORIES HERE!
+
+The prints turns out really fuzzy and stringy and I consulted Dan again about it. This is probably due to moisture in the air and the material. None of them are usable.
+
+Then, I noticed someone is using TPU filament on the Prusa XL, which allows the product to be flexible. Some of these materials are kept in separate dryer box on the top of the printer. I think this is a good idea for the fit and also for the ease of assembly and I decided to try it.
+
 <Media
+  widthPercentage={50}
   src="/project-assets/week-4/week-4-3d-print/tpu-connector-1.jpeg"
-  caption="The TPU connectors printed with PETG Clear filament"
+  caption="The TPU connectors printed with TPU filament"
 />
+
+## Assembly
 
 <Media
   src="/project-assets/week-4/week-4-3d-print/final-1.jpeg"
