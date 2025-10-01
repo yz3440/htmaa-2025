@@ -29,8 +29,8 @@ roles: []
 
 collaborators: []
 
-image: "/project-assets/week-3/week-3-embedded/hero.jpeg"
-video: "/project-assets/week-3/week-3-embedded/hero.mp4"
+image: "/project-assets/week-3/week-3-embedded/raycast-demo.jpeg"
+video: "/project-assets/week-3/week-3-embedded/raycast-demo-sm.mp4"
 
 visible: true
 featured: false
@@ -248,9 +248,112 @@ This explains why this particular example is hard to find online: because it's n
 
 ## Finally, the assignment
 
-I decided to implement a program to make the board a HID keyboard, which propogate the source code of the program itself, when the user press the `START` key.
+### Initial Plan
 
-TO BE CONTINUED...
+I decided to implement a program to make the board a HID keyboard, which propogate the source code of the program itself, when the user press the `START` key. But it turns out to be a whole field of study called [Quine](<https://en.wikipedia.org/wiki/Quine_(computing)>) - a program that reproduce its own source code. It's not very trivial to design such a program.
+
+I found a few of them on a [website](https://cs.lmu.edu/~ray/notes/quineprograms/). Here's a popular one I've seen in C are quite short and make use of the string literal feature.
+
+```c
+main(){char*s="main(){char*s=%c%s%c;printf(s,34,s,34);}";printf(s,34,s,34);}
+```
+
+### Alternative Plan
+
+I decided to implement a movable raycasting engine like the one in [Wolfenstein 3D](https://en.wikipedia.org/wiki/Wolfenstein_3D). The player would be able to move around the map, and the walls would be rendered with a simple flat shading with a single light source. And I would implement some dithering because the OLED display is black and white.
+
+I found a [good Youtube tutorial](https://www.youtube.com/watch?v=E18bSJezaUE&t=3686s) on how to implement the [Digital Differential Analyzer (DDA)](<https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)>) algorithm for a more performant raycasting. [An detailed article by Lode](https://lodev.org/cgtutor/raycasting.html) also provide a good explanation of the algorithm. Note that it only works for tile based map, which means the walls would be made of unit squares.
+
+### Implementation
+
+I asked Claude Sonnet 4 (Reasoning) to digest Quentin's two examples (with input and display) and draft a code skeleton for the raycasting engine. I specifically said "All imperative and no OOP, keep it simple, and struct is ok". It turns out it did too much for me by implementing a full-fledged raycasting logic. So I deleted the raycasting functions and reimplemented myself. Here's the core stuff:
+
+```c
+int worldMap[MAP_WIDTH][MAP_HEIGHT] = {
+  {1,1,1,1,1,1,1,1,1,1},
+  {1,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,0},
+  {1,0,1,1,1,1,1,1,0,1},
+  {1,0,0,1,0,0,1,0,0,1},
+  {1,0,0,1,0,0,1,0,0,1},
+  {1,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,1},
+  {1,0,0,0,0,0,0,0,0,1},
+  {1,1,1,1,1,1,1,1,1,1}
+};
+
+// ... other code ...
+struct RaycastHit {
+    float distance;
+    int side; // 0 = NS wall, 1 = EW wall
+};
+
+
+// Very nice raycasting functions
+RaycastHit cast_ray(float startX, float startY, float rayDirX, float rayDirY) {
+  int mapX = (int)startX;
+  int mapY = (int)startY;
+
+  float deltaDistX = abs(1.0f / rayDirX);
+  float deltaDistY = abs(1.0f / rayDirY);
+
+  int stepX, stepY;
+  float sideDistX, sideDistY;
+
+  if (rayDirX < 0) {
+    stepX = -1;
+    sideDistX = (startX - mapX) * deltaDistX;
+  } else {
+    stepX = 1;
+    sideDistX = (mapX + 1.0f - startX) * deltaDistX;
+  }
+
+  if (rayDirY < 0) {
+    stepY = -1;
+    sideDistY = (startY - mapY) * deltaDistY;
+  } else {
+    stepY = 1;
+    sideDistY = (mapY + 1.0f - startY) * deltaDistY;
+  }
+
+  // DDA
+  int hit = 0;
+  int side;
+
+  while (hit == 0) {
+    if (sideDistX < sideDistY) {
+      sideDistX += deltaDistX;
+      mapX += stepX;
+      side = 0;
+    } else {
+      sideDistY += deltaDistY;
+      mapY += stepY;
+      side = 1;
+    }
+
+    if (is_wall(mapX, mapY)) hit = 1;
+  }
+
+  // Compute perpendicular wall distance
+  float perpWallDist;
+  if (side == 0) {
+    perpWallDist = (mapX - startX + (1 - stepX) / 2) / rayDirX;
+  } else {
+    perpWallDist = (mapY - startY + (1 - stepY) / 2) / rayDirY;
+  }
+
+  return {perpWallDist, side};
+}
+```
+
+### Results
+
+It turns out the raycasting runs realy fast on the RP2040. I set the `FRAME_DELAY` to 20ms to it should ideally run at ~50 FPS, and it felt like it was running at that speed because the animation is smooth!
+
+<Media
+  src="/project-assets/week-3/week-3-embedded/raycast-demo.mp4"
+  caption={`Controlling the player with the touch pads`}
+/>
 
 ## References
 
@@ -258,3 +361,7 @@ TO BE CONTINUED...
 - [XIAO: Big Power, Small Board: Mastering Arduino and TinyML](https://mjrovai.github.io/XIAO_Big_Power_Small_Board-ebook/)
 - [U8g2 display library](https://github.com/olikraus/u8g2_arduino)
 - [Quentin's QPAD example code](https://gitlab.cba.mit.edu/quentinbolsee/qpad-xiao/-/tree/main/code)
+- [Wolfenstein 3D](https://en.wikipedia.org/wiki/Wolfenstein_3D)
+- [Digital Differential Analyzer (DDA)](<https://en.wikipedia.org/wiki/Digital_differential_analyzer_(graphics_algorithm)>)
+- [Lode's Computer Graphics Tutorial](https://lodev.org/cgtutor/raycasting.html)
+- [Youtube tutorial on DDA](https://www.youtube.com/watch?v=E18bSJezaUE&t=3686s)
