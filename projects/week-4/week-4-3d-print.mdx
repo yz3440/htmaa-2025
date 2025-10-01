@@ -93,7 +93,7 @@ Here's the parameters for the rod model.
 
 ### Printing rods
 
-I'm using Formlab Form 4 with Clear V5 material. I asked Dan to give me a walkthrough of the printing process and Ceci helped me a lot with her fabrication knowledge. Here are the steps I followed:
+I'm using Formlab Form 4 with Clear V5 material. I asked Dan to give me a walkthrough of the printing process and [Ceci](https://fab.cba.mit.edu/classes/863.25/people/CeciliaMarsicovetereFanjul/) helped me a lot with her fabrication knowledge. Here are the steps I followed:
 
 - Check the build platform
 - Print with patience
@@ -114,11 +114,26 @@ I'm using Formlab Form 4 with Clear V5 material. I asked Dan to give me a walkth
   />
 </GridSection>
 
-TO BE CONTINUED...
+I started printing the first batch of rods, along with some connectors (modeled by Shuang Cai in June 2025). Shuang sent me an STL file, and the exact dimensions is not captured in the file. I had to manually set the scale to be roughly correct (0.118x scale of the original STL).
+
+<GLBViewer
+  src="/project-assets/week-4/week-4-3d-print/june_2025_icosahedron_joint_printable.glb"
+  caption="The rod connectors modeled by Shuang Cai in June 2025"
+  cameraPosition={[0, 60, 200]}
+  backgroundColor="black"
+/>
 
 <Media
   src="/project-assets/week-4/week-4-3d-print/rod-sidelook.png"
   caption="The side look of the rod, with a tiny slit on the face"
+/>
+
+The connectors ended up too big for the rods to fit into. At this point, I felt the necessity to remodel the connectors.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/sla-print-1.jpg"
+  caption="First print with SLA resin"
 />
 
 <Media
@@ -141,4 +156,8 @@ TO BE CONTINUED...
   caption="Partially assembled kit with film fixed nicely on the face"
 />
 
-https://blog.prusa3d.com/how-to-fix-the-most-common-3d-printing-errors_8201/
+## Design files
+
+- [Icosahedron joints model by Shuang Cai](/project-assets/week-4/week-4-3d-print/june_2025_icosahedron_joint_printable.stl)
+
+- [Icosahedron kit Fusion 360 file](/project-assets/week-4/week-4-3d-print/icosahedron-kit.f3d)

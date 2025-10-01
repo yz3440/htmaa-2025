@@ -54,6 +54,7 @@ interface GLBViewerProps {
   showShadows?: boolean;
   cameraPosition?: [number, number, number];
   className?: string;
+  backgroundColor?: string;
 }
 
 export const GLBViewer = ({
@@ -64,6 +65,7 @@ export const GLBViewer = ({
   showEnvironment = true,
   showShadows = true,
   cameraPosition = [0, 0, 5],
+  backgroundColor,
   className,
 }: GLBViewerProps) => {
   return (
@@ -78,7 +80,11 @@ export const GLBViewer = ({
       <Canvas
         camera={{ position: cameraPosition, fov: 45 }}
         shadows={showShadows}
-        className="bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800"
+        className={cn(
+          !backgroundColor &&
+            "bg-gradient-to-br from-slate-50 to-slate-100 dark:from-slate-900 dark:to-slate-800",
+        )}
+        style={{ backgroundColor }}
       >
         {/* Lighting */}
         <ambientLight intensity={0.4} />
@@ -120,7 +126,7 @@ export const GLBViewer = ({
           enableZoom={true}
           enableRotate={true}
           minDistance={2}
-          maxDistance={10}
+          maxDistance={cameraPosition[2] * 2}
           minPolarAngle={0}
           maxPolarAngle={Math.PI}
         />
