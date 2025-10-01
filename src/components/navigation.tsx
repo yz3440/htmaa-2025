@@ -38,6 +38,11 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
     href: "https://github.com/yz3440/htmaa-2025",
     className: "cursor-help",
   },
+  {
+    title: "about",
+    href: "https://yufengzhao.com/about",
+    className: "cursor-pointer",
+  },
 ];
 
 export function Navigation({
