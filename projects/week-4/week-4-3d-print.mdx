@@ -112,9 +112,13 @@ I'm using Formlab Form 4 with Clear V5 material. I asked Dan to give me a walkth
   />
 </GridSection>
 
-I started printing the first batch of rods. Here's the setting for the print.
+I started printing the first batch of rods. Here's the setting for the print. Mainly the layer height is set to 0.025mm to get the fine details.
 
-!INSERT IMAGE!
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/sla-print-setting.jpeg"
+  caption="Setting for the SLA print"
+/>
 
 In the same batch, I also printed some connectors (modeled by Shuang Cai in June 2025). I noticed the print time doesn not increase much when addinbg the connectors in because the SLA printing uses exposure and only the maximum height would affect the print time. Shuang sent me an STL file, and the exact dimensions is not captured in the file. I had to manually set the scale to be roughly correct (0.118x scale of the original STL).
 
@@ -203,9 +207,7 @@ I also learned how to render the model in Fusion 360. I applied the clear acryli
 
 ## Printing the Connector
 
-I'm still worried about the clearance of the connector, given how rigid the resin material is. That's why I'm trying FDM printing with both PETG and PLA filaments.
-
-!INSERT FIVE FAILURE STORIES HERE!
+I'm still worried about the clearance of the connector, given how rigid the resin material is. That's why I'm trying FDM printing with both PETG and PLA filaments. All the FDM printer setting are the same, which uses 0.2mm layer height and half the default speed for the "Structural" profile that came with Prusa.
 
 <GridSection columnCount={2}>
   <Media
@@ -249,7 +251,15 @@ Unfortauntely, the SLA printer is showing warning about "Mixer detected debris".
   />
 </GridSection>
 
-I waited a few days until Dan swapped out the resin tank to a new one. I printed a few more rods again with the SLA resin printer. It turns out that the support material was too close to the slits, so it required a lot of cleaning. Here's a 10x speeded up time lapse of the cleaning process.
+I waited a few days until Dan swapped out the resin tank to a new one. I printed a few more rods again with the SLA resin printer.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/last-batch-rods.jpeg"
+  caption="Last batch of rods printed with SLA resin"
+/>
+
+It turns out that the support material was too close to the slits, so it required a lot of cleaning. Here's a 10x speeded up time lapse of the cleaning process.
 
 <Media
   widthPercentage={66}
