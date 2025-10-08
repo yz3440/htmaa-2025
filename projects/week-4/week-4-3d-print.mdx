@@ -203,9 +203,20 @@ I'm still worried about the clearance of the connector, given how rigid the resi
 
 !INSERT FIVE FAILURE STORIES HERE!
 
-The prints turns out really fuzzy and stringy and I consulted Dan again about it. This is probably due to moisture in the air and the material. None of them are usable.
+<GridSection columnCount={2}>
+  <Media
+    src="/project-assets/week-4/week-4-3d-print/pla-failed.jpeg"
+    caption="Failed print with PLA filament"
+  />
+  <Media
+    src="/project-assets/week-4/week-4-3d-print/petg-failed.jpeg"
+    caption="Failed print with PETG filament"
+  />
+</GridSection>
 
-Then, I noticed someone is using TPU filament on the Prusa XL, which allows the product to be flexible. Some of these materials are kept in separate dryer box on the top of the printer. I think this is a good idea for the fit and also for the ease of assembly and I decided to try it.
+The prints turns out really fuzzy and stringy and I consulted Dan again about it. This is probably due to moisture in the air and the material. None of them are usable. The CBA shop needs some maintenance.
+
+Then, I noticed someone is using TPU filament on the Prusa XL, which allows the product to be flexible. Some of these materials are kept in separate dryer box on the top of the printer. I think the flexible material is a good idea for the fit and also for the ease of assembly and I decided to try it.
 
 <Media
   widthPercentage={50}
@@ -213,11 +224,85 @@ Then, I noticed someone is using TPU filament on the Prusa XL, which allows the 
   caption="The TPU connectors printed with TPU filament"
 />
 
-## Assembly
+You can see the final print is still a little stringy, but much better than the PLA and PETG. The TPU tubes can stretch a little bit when I connect the rod.
+
+## Before Assembly
+
+Before going forward to assemble, I need to print more rods. To assemble the entire icosahedron, I need 30 rods and 12 connectors. I'm missing a few rods, so I need to print more with the SLA resin printer.
+
+### Some SLA Printer Failures
+
+Unfortauntely, the SLA printer is showing warning about "Mixer detected debris". Although I found [the official youtube cleaning guide from Formlab](https://www.youtube.com/watch?v=0DkdNsZI6lA), I notified Dan about it and he's going to clean it up. The previous print by someone else is a good example of the effect of the debris - it failed miserably.
+
+<GridSection columnCount={2}>
+  <Media
+    src="/project-assets/week-4/week-4-3d-print/someones-failed-resin-print.jpeg"
+    caption="Someone's failed resin print because of the debris"
+  />
+  <Media
+    src="/project-assets/week-4/week-4-3d-print/form-4-mixer-debris.jpeg"
+    caption="Mixer detected debris warning on the Form 4"
+  />
+</GridSection>
+
+I waited a few days until Dan swapped out the resin tank to a new one. I printed a few more rods again with the SLA resin printer. It turns out that the support material was too close to the slits, so it required a lot of cleaning. Here's a 10x speeded up time lapse of the cleaning process.
 
 <Media
-  src="/project-assets/week-4/week-4-3d-print/final-1.jpeg"
-  caption="Partially assembled kit with film fixed nicely on the face"
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/cleaning-sla-print.mp4"
+  caption="10x speeded up time lapse of the cleaning process"
+/>
+
+### Film dimensions
+
+Now I have one triangle face assmbled (with 3 rods and 3 connectors).
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/assmbled-1.jpeg"
+  caption="One triangle face assmbled (with 3 rods and 3 connectors)"
+/>
+
+Now I need to figure out the actual dimension for the triangular film piece inside. I took a measurement of the actual distance between the assembled connectors on both sides of the rod, which reads ~75mm.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/assembly-rod-measure.jpeg"
+  caption="The actual distance between the assembled connectors on both sides of the rod"
+/>
+
+I went back to Fusion 360 and modeled the triangle shape for the film. Given the entire rod is 80mm long, I made a notch at each corner of the triangle to make the tabs that slide into the slots 2.5mm wide.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/film-triangle.jpeg"
+  caption="Modeling the triangle shape for the film"
+/>
+
+I then used the xTool laser cutter to cut out the triangle shape for the film.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/laser-cut-triangles.jpeg"
+  caption="Laser cut triangles"
+/>
+
+## Final Assembly
+
+The assembly takes some skill and patience. The film needs to be perfectly aligned with the rod and the connector, and the tab (after some adjustments) can be pushed into slit on the rod smoothly after some maneuvering.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/assmbled-one-face.jpeg"
+  caption="Assembled one triangle face"
+/>
+
+I assmbled three adjacent triangle faces and now the icosahedron looks like this:
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-4/week-4-3d-print/assmbled-three-faces.jpeg"
+  caption="Assembled icosahedron kit (3 adjacent triangle faces)"
 />
 
 ## Design files
