@@ -9,13 +9,21 @@ import {
 } from "@react-three/drei";
 import type * as THREE from "three";
 import { cn } from "@/lib/utils";
+import { env } from "@/env.js";
 
 // GLB Model Component
 const GLBModel = ({
   src,
   ...props
 }: { src: string } & JSX.IntrinsicElements["group"]) => {
-  const { scene } = useGLTF(src);
+  const normalizedSrc =
+    typeof src === "string" && src.startsWith("/") ? src.slice(1) : src;
+
+  const finalSrc = env.NEXT_PUBLIC_BASE_URL
+    ? `${env.NEXT_PUBLIC_BASE_URL}/${normalizedSrc}`
+    : `/${normalizedSrc}`;
+
+  const { scene } = useGLTF(finalSrc);
   const modelRef = useRef<THREE.Group>(null);
 
   // Optional: Add rotation animation
