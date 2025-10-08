@@ -218,7 +218,7 @@ const LI = ({
 }: React.DetailedHTMLProps<
   React.HTMLAttributes<HTMLLIElement>,
   HTMLLIElement
->) => <li className="mb-2">{children}</li>;
+>) => <li className="last:mb-2">{children}</li>;
 
 const IMG = ({
   src,

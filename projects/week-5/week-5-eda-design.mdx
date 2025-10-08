@@ -1,0 +1,104 @@
+---
+title: "Getting Started with KiCad"
+categories: ["weekly assignment"]
+displayedCategory: "design a circuit"
+date: "2025-10-07"
+year: 2025
+displayedDate: "Week 5"
+
+description: "Designing a custom PCB for XIAO RP2040 and PixArt PMW3360 sensor."
+
+shortDescription: "to design a custom PCB for XIAO RP2040 and PixArt PMW3360 sensor."
+
+tags:
+  - kicad
+  - eda
+  - xiao rp2040
+  - pixart pwm3360
+  - pcb
+  - microcontroller
+  - sensor
+
+externalLink: null
+videoLink: null
+
+pressLinks: []
+
+publicationLinks: []
+
+priority: 2
+
+roles: []
+
+collaborators: []
+
+image: "/project-assets/week-5/week-5-eda-design/kicad-eda-design.jpeg"
+# video: "/project-assets/week-5/week-5-eda-design/kicad-eda-design.mp4"
+
+visible: true
+featured: false
+
+tableOfContents: true
+---
+
+## Assignment
+
+- group assignment
+  - use the test equipment in your lab to observe the operation of an embedded microcontroller
+- individual assignment
+  - use an EDA tool to design an embedded microcontroller system using parts from the inventory, check its design rules for fabrication, and simulate its operation
+  - extra credit
+    - try another design workflow
+    - design a case
+
+## Something useful for the final project
+
+[As previously mentioned in my first week's post](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/final-project-ideation/#for-scrolling-browsing-mechanics), I'm planning to make a version of Memex by reimagining the modern web browser experience with low tech. One of the key components is the scrolling mechanism, which I'm imagining to use a trackball device to control the scrolling. After some googling on the optical sensor for the trackball (I've thought about purely mechanical solutions like a wheel or a ball, but this part of the class is about electronics so here we are), I found the PixArt PMW3360 sensor.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-1/scroll-diagram.jpg"
+  caption="Diagram of a potential scrolling mechanism."
+/>
+
+## PixArt PMW3360
+
+PixArt PMW3360 is an optical mouse sensor found in many mice and trackballs. Here's the [datasheet for the PixArt PMW3360 sensor](https://d3s5r33r268y59.cloudfront.net/datasheets/9604/2017-05-07-18-19-11/PMS0058-PMW3360DM-T2QU-DS-R1.50-26092016._20161202173741.pdf). On page 8, it seems that the sensor comes with a chip and a lens, but the customer will have to supply their own breakout PCB and base plate for the lens.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/pmw-3360-exploded-assembly-view.png"
+  caption="PixArt PMW3360 sensor exploded assembly view"
+/>
+
+There are a few vendors that sell the sensor with their own breakout PCB, for example [Joe's Sensors and Sundry](https://lectronz.com/stores/citizenjoe) on [LECTRONZ.com](https://lectronz.com/products/pmw3360-motion-sensor). Although I'll probably opt for a bare sensor from [AliExperess](https://www.aliexpress.us/item/3256806021867041.html?gatewayAdapt=glo2usa4itemAdapt), in the spirite of the class, I do appreciate their [open source effort](https://github.com/mrjohnk/PMW3360DM-T2QU) in designing the breakout PCB. I also stumbled upon a few other open source PCD designs, such as [this one by kbjunky](https://github.com/kbjunky/PMW3360), and this one by [jfedor2](https://github.com/jfedor2/rp2040-pmw3360) (specifically for the RP2040).
+
+<GridSection columnCount={2}>
+<Media
+  src="/project-assets/week-5/week-5-eda-design/joes-sensor-pmw3360.png"
+  caption="Joe's Sensors and Sundry PMW3360 sensor with custom PCB"
+/>
+
+<Media
+  src="/project-assets/week-5/week-5-eda-design/jfedor2-rp2040-pmw3360.png"
+  caption="jfedor2's custom PCB for RP2040 & PMW3360 "
+/>
+</GridSection>
+
+These open source designs saved me a lot of time reading the datasheet and understanding the sensor.
+
+I also found a symbol and footprint for the sensor on [SnapMagic](https://www.snapeda.com/parts/PMW3360DM-T2QU/PixArt/view-part/) created by trimenz. After eyeballing the footprint against the datasheet, I think I can use it.
+
+<Media
+  src="/project-assets/week-5/week-5-eda-design/snapmagic-symbol-footprint.png"
+  caption="Symbol and footprint for the PixArt PMW3360 sensor on SnapMagic"
+/>
+
+## KiCad
+
+TO BE ADDED.
+
+## References
+
+- [Quentin's EDA Recitation](https://vimeo.com/1124302535/cbe009f9f5?ts=0&share=copy)
+- [Seeed Studio XIAO RP2040 Schematic](https://files.seeedstudio.com/wiki/XIAO-RP2040/res/Seeed-Studio-XIAO-RP2040-v1.3.pdf)
