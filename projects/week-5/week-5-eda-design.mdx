@@ -87,7 +87,7 @@ There are a few vendors that sell the sensor with their own breakout PCB, for ex
 
 These open source designs saved me a lot of time reading the datasheet and understanding the sensor.
 
-I also found a symbol and footprint for the sensor on [SnapMagic](https://www.snapeda.com/parts/PMW3360DM-T2QU/PixArt/view-part/) created by trimenz. After eyeballing the footprint against the datasheet, I think I can use it.
+I also found a symbol and footprint for the sensor on [SnapMagic](https://www.snapeda.com/parts/PMW3360DM-T2QU/PixArt/view-part/) created by trimenz. After eyeballing the footprint against the datasheet, the schematic is missing some pins for reason I don't know. So I'm not using it.
 
 <Media
   src="/project-assets/week-5/week-5-eda-design/snapmagic-symbol-footprint.png"
@@ -96,7 +96,24 @@ I also found a symbol and footprint for the sensor on [SnapMagic](https://www.sn
 
 ## KiCad
 
+Because of my limited experience (all of my experience is limited to [Quentin's recitation](https://vimeo.com/1124302535/cbe009f9f5?ts=0&share=copy)), I decided to take a look at `jfedor2`'s kicad project file.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/jfedor2-kicad-pcb.png"
+  caption="jfedor2's kicad PCB file, which looks quite complicated"
+/>
+
+The schematics has quite a some parts - flash, crystal, GPIO pins breakout, etc. I'm not sure exactly what they do yet. My plan is to modify this open source schematic to fit my XIAO RP2040 board.
+
+<Media
+  src="/project-assets/week-5/week-5-eda-design/jfedor2-rp2040-pmw3360-schematics.png"
+  caption="jfedor2's kicad schematics file"
+/>
+
 TO BE ADDED.
+
+{/* I noticed they left [the component footprint `.pretty` folder](https://github.com/jfedor2/rp2040-pmw3360/tree/master/kicad/PMW3360.pretty) for the sensor. I decided to use it. */}
 
 ## References
 
