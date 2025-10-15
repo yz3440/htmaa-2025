@@ -84,7 +84,7 @@ const AutoMedia = ({
           `w-full rounded-lg object-cover`,
           !noGlow && "glow-on-hover",
           "select-none",
-          "pointer-events-none",
+          // "pointer-events-none",
           className,
         )}
         src={src}

@@ -17,7 +17,7 @@ export function ZoomableContainer({
     if (width < 768) {
       return 0;
     }
-    return 100;
+    return 64;
   }, [width]);
 
   return (
