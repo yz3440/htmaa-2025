@@ -4,6 +4,7 @@ import { Separator } from "../ui/separator";
 import { InlineLink } from "../ui/inline-link";
 import SyntaxHighlighter from "react-syntax-highlighter";
 import { github } from "react-syntax-highlighter/dist/esm/styles/hljs";
+import { CopyButton } from "./copy-button";
 
 // Helper function to safely convert React children to string
 const childrenToString = (children: React.ReactNode): string => {
@@ -248,6 +249,8 @@ const CODE = ({
   className,
 }: React.DetailedHTMLProps<React.HTMLAttributes<HTMLElement>, HTMLElement>) => {
   const language = className?.split("language-")[1];
+  const codeText = childrenToString(children);
+
   const CustomCode = (
     props: React.DetailedHTMLProps<
       React.HTMLAttributes<HTMLElement>,
@@ -269,14 +272,17 @@ const CODE = ({
       HTMLPreElement
     >,
   ) => (
-    <pre
-      id="customPreTag"
-      {...props}
-      className={cn(
-        props.className,
-        "mb-4 max-h-64 overflow-x-auto rounded-md !bg-primary-foreground/50 px-2 py-1 text-sm",
-      )}
-    />
+    <div className="group relative">
+      <pre
+        id="customPreTag"
+        {...props}
+        className={cn(
+          props.className,
+          "mb-4 max-h-64 overflow-x-auto rounded-md !bg-primary-foreground/50 px-2 py-1 text-sm",
+        )}
+      />
+      <CopyButton text={codeText} />
+    </div>
   );
 
   if (language) {
@@ -288,14 +294,14 @@ const CODE = ({
         CodeTag={CustomCode}
         PreTag={CustomPre}
       >
-        {childrenToString(children)}
+        {codeText}
       </SyntaxHighlighter>
     );
   }
 
   return (
     <CustomCode className="rounded-md bg-primary-foreground/50 px-1 py-0.5 font-mono text-sm">
-      {childrenToString(children)}
+      {codeText}
     </CustomCode>
   );
 };
