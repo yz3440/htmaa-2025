@@ -32,8 +32,8 @@ roles: []
 
 collaborators: []
 
-image: "/project-assets/week-5/week-5-eda-design/kicad-eda-design.jpeg"
-# video: "/project-assets/week-5/week-5-eda-design/kicad-eda-design.mp4"
+image: "/project-assets/week-5/week-5-eda-design/yufeng-pcb-4-3d.png"
+video: "/project-assets/week-5/week-5-eda-design/yufeng-pcb-4-3d.mp4"
 
 visible: true
 featured: false
@@ -104,18 +104,171 @@ Because of my limited experience (all of my experience is limited to [Quentin's 
   caption="jfedor2's kicad PCB file, which looks quite complicated"
 />
 
-The schematics has quite a some parts - flash, crystal, GPIO pins breakout, etc. I'm not sure exactly what they do yet. My plan is to modify this open source schematic to fit my XIAO RP2040 board.
+The schematics has quite a some additionalparts - flash, crystal, GPIO pins breakout, etc. I'm not sure exactly what they do yet. My plan is to modify this open source schematic to fit my XIAO RP2040 board.
 
 <Media
   src="/project-assets/week-5/week-5-eda-design/jfedor2-rp2040-pmw3360-schematics.png"
   caption="jfedor2's kicad schematics file"
 />
 
-TO BE ADDED.
+## Studying the Sensor Schematic
+
+I started by looking closely at the sensor schematic. I'm cross referencing the datasheet and the symbol from jfedor2's kicad schematics file.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/jfedor2-pmw-3360-symbol.png"
+  caption="jfedor2's kicad symbol for the PixArt PMW3360 sensor"
+/>
+
+I noticed a few things:
+
+- PWM3360 uses Serial Port Interface (SPI) to communicate with the microcontroller.
+  - MISO, MOSI, and SCLK are connected to the corresponding pins on the microcontroller.
+  - The `NCS` pin means `Not Chip Select`. It's used to select the sensor is software controlled. So I can connect it to any GPIO pin on the microcontroller.
+- The sensor needs 1.8 - 2.2V power supply, which is not supplied by the XIAO RP2040, which means we need a voltage regulator to step down the voltage.
+
+Regarding the additional parts, here's my thinking:
+
+| Part                   | Function                                  | Necessary for my project? |
+| ---------------------- | ----------------------------------------- | ------------------------- |
+| Flash                  | Store the firmware for the sensor         | No                        |
+| Crystal                | Oscillator for the sensor                 | No                        |
+| GPIO pins breakout     | Connect the sensor to the microcontroller | No                        |
+| USB pins breakout      | Connect the sensor to the USB port        | No (XIAO RP2040 has USB)  |
+| 3.3V Voltage regulator | Step down the voltage                     | No (XIAO RP2040 has 3.3V) |
+| 1.8V Voltage regulator | Step down the voltage                     | Yes                       |
 
 {/* I noticed they left [the component footprint `.pretty` folder](https://github.com/jfedor2/rp2040-pmw3360/tree/master/kicad/PMW3360.pretty) for the sensor. I decided to use it. */}
+
+## Make the Changes
+
+First,I removed all the additional parts and replaced them with the XIAO RP2040 and the 1.8V voltage regulator from the HTMAA fab inventory.
+
+As suggested in the recitation, the first thing I did is to rename the pin labels in the symbol for XIAO RP2040 to include the actual `P` pin number, in addition to the `D` pin number.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/kicad-rename-rp2040-symbol.png"
+  caption="Renamed pin labels for XIAO RP2040 symbol"
+/>
+
+Here are something present in the jfedor2's symbol but I couldn't find in the HTMAA fab inventory:
+
+| Part                   | Note                                                                               |
+| ---------------------- | ---------------------------------------------------------------------------------- |
+| 1.8V Voltage regulator | I'll find an alternative that ships quickly to me in a good footprint              |
+| 100nF capacitor        | I doubt that I need that much capacitance (it's at VDD pin, so it's for stability) |
+
+In [mrjohnk's open source design](https://github.com/mrjohnk/PMW3360DM-T2QU), they are using a TLV70019DDCR voltage regulator ([link on Digikey](https://www.digikey.com/en/products/detail/texas-instruments/TLV70019DDCR/3202566), datasheet [link](https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https://www.ti.com/lit/gpn/tlv700)) and the package footprint is `SOT-23-5 Thin`.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/TLV70019DDCR.png"
+  caption="TLV70019DDCR Pin Assignment"
+/>
+
+For the series of parallel capacitors, I'm replacing them with a single 4.7uF
+capacitor.
+
+<Media
+  src="/project-assets/week-5/week-5-eda-design/yufeng-sch-1.png"
+  caption="Yufeng's schematics for the PCB, V1"
+/>
+
+After I made sure everything has the correct footprint, I then tried to connect everything in the PCB design. I had a lot of trouble with the connections.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/yufeng-pcb-1.png"
+  caption="Yufeng's PCB design, V1"
+/>
+
+## Iterations
+
+### Version 2
+
+One of the challenges was because of the SPI pin order of the XIAO RP2040 and the PMW3360 sensor are different. I also noticed that `TLV70019DDCR` can take 3.3V input, so I disconnected it from 5V and hooked it up to 3.3V. The 5V power is not in use in this design. Here's the version 2 of the schematics.
+
+<Media
+  src="/project-assets/week-5/week-5-eda-design/yufeng-sch-2.png"
+  caption="Yufeng's schematics for the PCB, V2"
+/>
+
+In the PCB design, I changed the orientation of the PMW3360 sensor because I want it to look more symmetric with respect to the XIAO RP2040 USB-C port, like a normal mouse / trackball input device.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/yufeng-pcb-2.png"
+  caption="Yufeng's PCB design, V2"
+/>
+
+Unfortunately, something is missing in the above design: the ground connection for PMW3360 sensor is missing because the routing topology just doesn't allow it.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/yufeng-pcb-2-problem.png"
+  caption="Problem in Yufeng's PCB design, V2"
+/>
+
+### Version 3
+
+Therefore, I added a 0ohm resistor, basically a jumper, to connect the ground of the PMW3360 sensor to the ground of the XIAO RP2040. Here's the version 3 of the schematics.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/yufeng-sch-3.png"
+  caption="Yufeng's schematics for the PCB, V3"
+/>
+
+Here's the version 3 of the PCB design, which passes the ERC check.
+
+<Media
+  src="/project-assets/week-5/week-5-eda-design/yufeng-pcb-3.png"
+  caption="Yufeng's PCB design, V3"
+/>
+
+Last but not least, the PMW3360 sensor has, well, optical sensors at the bottom, so the PCB needs a cutout underneath the sensor (which is why I avoided any routing under the sensor as much as possible).
+
+## Final PCB Design
+
+This is the final version of the PCB design.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/yufeng-pcb-4.png"
+  caption="Yufeng's PCB design, V4"
+/>
+
+And here's a 3D render of the PCB.
+
+<Media
+  src="/project-assets/week-5/week-5-eda-design/yufeng-pcb-4-3d.png"
+  caption="3D render of Yufeng's PCB design, V4"
+/>
+
+And here's the 3D model for the PCB for future case design.
+
+<GLBViewer
+  cameraPosition={[0, -0.15, 0]}
+  autoRotate={false}
+  objectPosition={[-0.125, 0, -0.075]}
+  src="/project-assets/week-5/week-5-eda-design/yufeng-pcb-4-3d-model.glb"
+  caption="3D model of Yufeng's PCB design, V4"
+/>
 
 ## References
 
 - [Quentin's EDA Recitation](https://vimeo.com/1124302535/cbe009f9f5?ts=0&share=copy)
 - [Seeed Studio XIAO RP2040 Schematic](https://files.seeedstudio.com/wiki/XIAO-RP2040/res/Seeed-Studio-XIAO-RP2040-v1.3.pdf)
+- [jfedor2's kicad project file](https://github.com/jfedor2/rp2040-pmw3360)
+- [mrjohnk's open source design](https://github.com/mrjohnk/PMW3360DM-T2QU)
+- [SnapMagic](https://www.snapeda.com/parts/PMW3360DM-T2QU/PixArt/view-part/)
+- [PixArt PMW3360 sensor datasheet](https://d3s5r33r268y59.cloudfront.net/datasheets/9604/2017-05-07-18-19-11/PMS0058-PMW3360DM-T2QU-DS-R1.50-26092016._20161202173741.pdf)
+- [TLV70019DDCR](https://www.digikey.com/en/products/detail/texas-instruments/TLV70019DDCR/3202566)
+- [TLV70019DDCR datasheet](https://www.ti.com/general/docs/suppproductinfo.tsp?distId=10&gotoUrl=https://www.ti.com/lit/gpn/tlv700)
+
+## Design Files
+
+- [KiCad Project Folder Zipped](/project-assets/week-5/week-5-eda-design/yufeng-trackball-kicad.zip)
+- [PCB 3D Model](/project-assets/week-5/week-5-eda-design/yufeng-trackball-pcb-3d-model.glb)

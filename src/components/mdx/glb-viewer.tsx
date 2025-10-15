@@ -61,6 +61,7 @@ interface GLBViewerProps {
   showEnvironment?: boolean;
   showShadows?: boolean;
   cameraPosition?: [number, number, number];
+  objectPosition?: [number, number, number];
   className?: string;
   backgroundColor?: string;
 }
@@ -73,9 +74,15 @@ export const GLBViewer = ({
   showEnvironment = true,
   showShadows = true,
   cameraPosition = [0, 0, 5],
+  objectPosition = [0, 0, 0],
   backgroundColor,
   className,
 }: GLBViewerProps) => {
+  const initialCameraDistance = Math.sqrt(
+    cameraPosition[0] * cameraPosition[0] +
+      cameraPosition[1] * cameraPosition[1] +
+      cameraPosition[2] * cameraPosition[2],
+  );
   return (
     <div
       className={cn(
@@ -113,7 +120,9 @@ export const GLBViewer = ({
 
         {/* Model */}
         <Suspense fallback={<GLBLoader />}>
-          <GLBModel src={src} />
+          <group position={objectPosition}>
+            <GLBModel src={src} />
+          </group>
         </Suspense>
 
         {/* Shadows */}
@@ -130,12 +139,12 @@ export const GLBViewer = ({
         {/* Controls */}
         <OrbitControls
           autoRotate={autoRotate}
-          autoRotateSpeed={0.5}
+          autoRotateSpeed={autoRotate ? 0.5 : 0}
           enablePan={true}
           enableZoom={true}
           enableRotate={true}
-          minDistance={2}
-          maxDistance={cameraPosition[2] * 2}
+          minDistance={initialCameraDistance * 0.5}
+          maxDistance={initialCameraDistance * 2}
           minPolarAngle={0}
           maxPolarAngle={Math.PI}
         />
