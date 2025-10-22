@@ -1,0 +1,222 @@
+---
+title: "Something Big: 2.5D CNC Milling"
+categories: ["weekly assignment"]
+displayedCategory: "2.5D CNC Milling"
+date: "2025-10-22"
+year: 2025
+displayedDate: "Week 5"
+
+description: "Designing and CNC milling a lamp-esque object..."
+
+shortDescription: "a lamp esque object..."
+
+tags:
+  - CNC 2.5
+
+externalLink: null
+videoLink: null
+
+pressLinks: []
+
+publicationLinks: []
+
+priority: 2
+
+roles: []
+
+collaborators: []
+
+image: "/project-assets/week-7/week-7-cam-2.5d-cnc/hero.jpeg"
+video: "/project-assets/week-7/week-7-cam-2.5d-cnc/hero.mp4"
+
+visible: true
+featured: false
+
+tableOfContents: true
+---
+
+## Assignment
+
+- group assignment
+  - do your lab's safety training
+  - test runout, alignment, fixturing, speeds, feeds, materials, and toolpaths for your machine
+- individual assignment
+  - make (design+mill+assemble) something big (~meter-scale)
+  - extra credit: don't use fasteners or glue
+  - extra credit: include curved surfaces
+
+{/* ## Safety Training */}
+
+## What to make
+
+I know we will be using OSB (Oriented Strand Board) for the project. I'm thinking of making something smaller than most furniture, but still big (meter scale) for this assignment. During a call with my 14-year-old cousin, I mentioned this assignment, and the idea of making a lamp with articulated arms. I explained the process of 2.5D CNC milling to him, and he drew a rough sketch of what he imagined. How cute!
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/cousin.jpg"
+  caption="A call with my cousin and he drew this for me"
+/>
+
+I found a relevant project on Instructables: [Woodpunk LED Desk Lamp](https://www.instructables.com/Woodpunk-LED-Desk-Lamp/) by [jeff-o](https://www.instructables.com/member/jeff-o/). The project is produced by hand, but the illustrations are pretty detailed and helpful. I was referencing the part shape, part placement and count. It's a simple desk lamp with a base and a stem, and the stem is articulated with a ball joint. It's a good starting point for me.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/woodpunk-led-desk-lamp.jpeg"
+  caption="Woodpunk LED Desk Lamp by jeff-o. I was referencing the part shape, part placement and count."
+/>
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/woodpunk-design.png"
+  caption="Jeff's design for the Woodpunk LED Desk Lamp"
+/>
+
+## My Own Design
+
+I make my own design in Fusion 360. I sketched out the base, arm, elbow joint, shoulder joint, and some spacers. I fully parameterized the design, so I can easily change the dimensions later. This is important because I don't know the exact dimensions of the OSB I'm using, and the circular dowels required for the joints were yet to be bought from Home Depot.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/initial-design.png"
+  caption="My design for the Woodpunk LED Desk Lamp"
+/>
+
+This is the final parameter table:
+
+| Name                    | Expression                     |
+| :---------------------- | :----------------------------- |
+| arm_dowel_distance      | 18 in                          |
+| arm_hole_gap            | 180 mm                         |
+| dogbone_radial_offset   | -2 mm                          |
+| dowel_diameter_big      | 19.6 mm                        |
+| dowel_diameter_small    | 11 mm                          |
+| endmill_diameter        | 0.25 in                        |
+| joint_tolerance         | 1 mm                           |
+| shoulder_mount_gap      | 20 mm                          |
+| shoulder_mount_width    | 40 mm                          |
+| spinner_circle_diameter | 50 mm                          |
+| spinner_circle_distance | spinner_circle_diameter \* 1.5 |
+| stock_height            | 2438.4 mm                      |
+| stock_thickness         | 0.464 in                       |
+| stock_width             | 1219.2 mm                      |
+
+In the table, the `stock_thickness`, `dowel_diameter_big`, `dowel_diameter_small`, `joint_tolerance` are determined later during the characterization process.
+
+## Characterization
+
+Before manufacturing, Ray and I started doing some test fittings to see how joints works. We measured the thickness of the OSB to be `11.11mm` and designed a test piece with holes with varying widths at `0.1mm` intervals.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/characterization-process.jpeg"
+  caption="Characterization test fitting"
+/>
+
+We decided that the holes should be `0.1mm` wider than the OSB thickness to allow for some wiggle room, hence the `joint_tolerance` parameter is set to `1mm`.
+
+## Dowels and Springs
+
+I need to buy the dowels and springs from Home Depot. I bought allegedly `3/4in` and `7/16in` dowels and two springs (each for one arm) of suitable length.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/dowels-and-spring.jpeg"
+  caption="Dowels and springs"
+/>
+
+## Manufacturing
+
+Following the [ShopBot User Guide](https://docs.google.com/document/d/1-rF9PmoOsOtS0qZ2KEEdkcyEs0x8U_7F7Ub0gUat6TE/edit?tab=t.0), I started in the `Manufacturing` tab in Fusion 360. After selecting the right rool (1/4 inch endmill) and the right thickness (when I started with the real deal, it reads `11.16mm` or `0.46in`),
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/final-measuring.jpeg"
+  caption="Final measuring of the thickness of the OSB"
+/>
+
+Then I started the picking the contours, toolpath generation, simulation, and exporting the GCode file.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/toolpath.png"
+  caption="Toolpath for the manufacturing"
+/>
+
+Here are the parts I ended up with
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/parts.jpeg"
+  caption="Parts I ended up with"
+/>
+
+Because of the tabs on the edge of the parts, it's not very smooth. So I went ahead and sanded everything.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/sanding.jpeg"
+  caption="Sanding the parts"
+/>
+
+## Assembly
+
+I started by assembling referencing the [Woodpunk LED Desk Lamp](https://www.instructables.com/Woodpunk-LED-Desk-Lamp/) project. I realized somehting catastrophic happened to my shoulder design - the clearance between the base and the lower hole is too small for the arm to spin.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/problem.png"
+  caption="The shoulder design problem"
+/>
+
+So I installed the bottom arm on the top hole, and the spring at somewhere lower than the arm hole. This results in having the opposite pulling direction for the spring, which does not support the base arm at all.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/base-spring.jpeg"
+  caption="The spring pulling direction problem when the bottom arm is installed on the top hole"
+/>
+
+Here's a demonstration of the problem.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/bottom-video.mp4"
+  caption="The bottom arm is heavier because of the spring."
+/>
+
+Thankfully, the top arm works fine, because I can place the spring as it's supposed to go.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/top-video.mp4"
+  caption="The top arm is supported by the spring."
+/>
+
+Here's a picture of the assembled "lamp". I wanted to place it sideways as a spring loaded spanking / slapping machine, but I didn't have time to mill a hand... So I put a spare arm part and stick the spare dowel rod into it to make it looks as if it's holding a baton.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/assembly.jpeg"
+  caption="Assembled 'lamp' with a spare arm part and a spare dowel rod"
+/>
+
+Unfortunately, the spring is installed in reverse direction, and not very strong. So it wouldn't spank really.
+
+## Fixed Shoulder Joint
+
+I redesigned my shoulder joint to have the right clearance but it's too late to make a new one for the day. I'll save it for later!
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-7/week-7-cam-2.5d-cnc/fixed-shoulder.png"
+  caption="Fixed shoulder joint"
+/>
+
+## References
+
+- [Woodpunk LED Desk Lamp](https://www.instructables.com/Woodpunk-LED-Desk-Lamp/)
+- [CAM Retitation Markdown GitLab](https://gitlab.cba.mit.edu/classes/863.25/site/-/tree/main/doc/CAM)
+
+## Design Files
+
+- [My Fusion 360 Design](/project-assets/week-7/week-7-cam-2.5d-cnc/yufeng-lamp-thing.f3d)
