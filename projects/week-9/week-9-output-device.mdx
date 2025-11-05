@@ -32,7 +32,7 @@ collaborators: []
 image: "/project-assets/week-8/week-8-input-device/hero.jpeg"
 video: "/project-assets/week-8/week-8-input-device/hero.mp4"
 
-visible: false
+visible: true
 featured: false
 
 tableOfContents: true
@@ -47,12 +47,193 @@ tableOfContents: true
 
 ## What to make
 
-## References
+If you have read my [final project roadmap](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/hypercarousel-roadmap/), you will know that I'm desparately trying to find a way to make a transparent screen for the HyperCarousel.
 
-- [Woodpunk LED Desk Lamp](https://www.instructables.com/Woodpunk-LED-Desk-Lamp/)
-- [ShopBot User Guide](https://docs.google.com/document/d/1-rF9PmoOsOtS0qZ2KEEdkcyEs0x8U_7F7Ub0gUat6TE/edit?tab=t.0)
-- [CAM Retitation Markdown GitLab](https://gitlab.cba.mit.edu/classes/863.25/site/-/tree/main/doc/CAM)
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/transparent-lcd-amazon.png"
+  caption="If you search for 'transparent lcd' on Amazon, you won't find anything"
+/>
+
+If you search on Amazon, you will only find OLED screens, which is emmisive / additive and not suitable for subtracting light from the already bright projection light source.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/mini-lcd.png"
+  caption="Waveshare 2inch Mini LCD Screen, SPI Interface"
+  copyright="Amazon Vendor"
+/>
+
+The best one I found is [this one](https://www.amazon.com/dp/B082GFTZQD) from Waveshare. It has a nice size comparable to a 35mm film slide, and it's SPI interface, which is easy to interface with a microcontroller.
+
+## Something from Fab Inventory
+
+I found a [Lumex LCM-S01602DTR/M LCD screen](https://www.digikey.com/en/products/detail/lumex-opto-components-inc/LCM-S01602DTR-M/469805) in the fab inventory. It's a TFT LCD screen, and the back looks easy to peel off.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/package.jpeg"
+  caption="Package of Lumex LCM-S01602DTR/M LCD screen says do not do what I do"
+/>
+
+Well, if you look at the back of the package, it says "DO NOT TOUCH THE POLARIZER OR REFLECTOR". But I'm doing it anyway to find out it probably doesn't work the hard way.
+
+## Peel off the polarizer and reflector
+
+We are peeling off the polarizer and reflector to see if it will block light properly through a light source.
+
+<GridSection columnCount={2}>
+<Media
+  src="/project-assets/week-9/week-9-output-device/peel-1.jpeg"
+  caption="Peel off the polarizer and reflector"
+/>
+
+<Media
+  src="/project-assets/week-9/week-9-output-device/peel-2.jpeg"
+  caption="It's off"
+/>
+</GridSection>
+
+## Wiring the LCD screen
+
+I have a XIAO ESP32 S3 Sense board in hand for my final project, so I can use it to test the LCD screen.
+
+I found the datasheet from [Digikey](https://www.lumex.com/datasheet/files/LCM-S01602DTR-M.pdf), and the footprint and symbol from [SnapMagic](https://www.digikey.com/en/models/469805?tab=snapmagic).
+
+I fed the datasheet to Claude Sonnet 4.5 and it tells me to connect like this:
+
+| LCD Pin | LCD Name | ESP32-S3 Pin  | Description                   |
+| ------- | -------- | ------------- | ----------------------------- |
+| 1       | VSS      | GND           | Ground                        |
+| 2       | VDD      | 5V            | Power supply                  |
+| 3       | V0       | Potentiometer | Contrast (0.5V-1.0V)          |
+| 4       | RS       | GPIO4         | Register Select               |
+| 5       | R/W      | GND           | Read/Write (tie to GND)       |
+| 6       | E        | GPIO5         | Enable                        |
+| 7       | D0       | Not connected | Not used in 4-bit mode        |
+| 8       | D1       | Not connected | Not used in 4-bit mode        |
+| 9       | D2       | Not connected | Not used in 4-bit mode        |
+| 10      | D3       | Not connected | Not used in 4-bit mode        |
+| 11      | D4       | GPIO6         | Data bit 4                    |
+| 12      | D5       | GPIO7         | Data bit 5                    |
+| 13      | D6       | GPIO8         | Data bit 6                    |
+| 14      | D7       | GPIO9         | Data bit 7                    |
+| 15      | LED+     | 5V + resistor | Backlight positive (optional) |
+| 16      | LED-     | GND           | Backlight negative (optional) |
+
+After importing the footprint and symbol to KiCad, I connected the pins like above.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/schema.png"
+  caption="Schema of the LCD screen and the XIAO ESP32 S3 Sense board"
+/>
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/pcb.png"
+  caption="PCB design of the LCD screen and the XIAO ESP32 S3 Sense board"
+/>
+
+## Making the PCB
+
+I made these black and white images from the Gerber files.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/gerber.png"
+  caption="Black and white images from the Gerber files"
+/>
+
+Then I make the toolpath for the Carvera machine on [modsproject.com](https://modsproject.com/).
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/toolpath.jpeg"
+  caption="Toolpath for the Carvera machine "
+/>
+
+Then I got the PCB done! (will write about some problems later)
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/pcb-2.jpeg"
+  caption="PCB with nice holes and traces"
+/>
+
+Then I spent a lot of time soldering the components on the PCB. I couldn't figure out how to solder the RS pin to the ground without touching other pins. So I ended up soldering a jumper wire to the RS pin.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-9/week-9-output-device/pcd-soldered.jpeg"
+  caption="Soldered PCB"
+/>
+
+## Testing the LCD screen
+
+I put a test program on the XIAO ESP32 S3 Sense board to test the LCD screen. It's using the LiquidCrystal library to control the LCD screen, and it displays a pingpong block bouncing back and forth.
+
+```cpp
+#include <LiquidCrystal.h>
+
+LiquidCrystal lcd(4, 5, 6, 7, 8, 9);
+
+int col = 0;
+int row = 0;
+int dirCol = 1;  // 1 = right, -1 = left
+int dirRow = 1;  // 1 = down, -1 = up
+
+void setup() {
+  lcd.begin(16, 2);
+  lcd.clear();
+}
+
+void loop() {
+  lcd.clear();
+
+  // Draw block
+  lcd.setCursor(col, row);
+  lcd.write(255);
+
+  // Move diagonally
+  col += dirCol;
+  row += dirRow;
+
+  // Bounce off left/right edges
+  if (col >= 15 || col <= 0) {
+    dirCol = -dirCol;
+    col = constrain(col, 0, 15);
+  }
+
+  // Bounce off top/bottom edges
+  if (row >= 1 || row <= 0) {
+    dirRow = -dirRow;
+    row = constrain(row, 0, 1);
+  }
+
+  delay(300);
+}
+```
+
+Here's a video of the test program running on the LCD screen. You can see it struggles to display the block properly at an off angle, a classic problem of TFT LCD screens. I think this is because of polarization?
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-9/week-9-output-device/demo.mp4"
+  caption="Demo of the test program running on the LCD screen"
+/>
+
+## Moment of Truth
+
+I'm testing it in the dark with a phone flashlight. It didn't work... Case closed.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-9/week-9-output-device/demo-2.mp4"
+  caption="Demo of the test program running on the LCD screen in the dark"
+/>
 
 ## Design Files
 
-- [My Fusion 360 Design](/project-assets/week-7/week-7-cam-2.5d-cnc/yufeng-lamp-thing.f3d)
+To be added!
+{/* - [My Fusion 360 Design](/project-assets/week-7/week-7-cam-2.5d-cnc/yufeng-lamp-thing.f3d) */}
