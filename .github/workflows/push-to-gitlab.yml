@@ -57,4 +57,6 @@ jobs:
           git add .
           git commit -m "${{ github.event.head_commit.message }}" || echo "No changes to commit"
           git status
+          # Rebase before pushing to avoid non-fast-forward error
+          git pull --rebase origin new-main
           git push origin new-main
