@@ -72,7 +72,7 @@ export default function BackgroundElement() {
             level={0.4}
           />
           <ChromaticAberration
-            blendFunction={BlendFunction.NORMAL}
+            blendFunction={BlendFunction.ADD}
             offset={new THREE.Vector2(0.004, 0.0004)}
             radialModulation={false}
             modulationOffset={0}
