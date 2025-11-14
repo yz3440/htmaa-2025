@@ -49,26 +49,12 @@ jobs:
       - name: Push
         # Customize deployment folder here
         run: |
+          # Copy built files to gitlab repo
           cp -r out/* gitlab-repo/
           cd gitlab-repo
-
           git config --global user.name "Yufeng, Zhao"
           git config --global user.email "yufengz@mit.edu"
-
-          # Increase git buffer size
-          git config http.postBuffer 524288000
-
-          # Add files in smaller batches (skip if no files match)
-          git add "*.html" "*.txt" "*.json" "*.js" "*.css" 2>/dev/null || true
-          git commit -m "Add text files" || true
-          git push origin main || true
-
-          # Add images if they exist
-          find . -type f \( -name "*.jpg" -o -name "*.jpeg" -o -name "*.png" -o -name "*.gif" \) -print0 | xargs -0 -r git add
-          git commit -m "Add images" || true
-          git push origin main || true
-
-          # Add everything else
           git add .
-          git commit -m "${{ github.event.head_commit.message }}" || true
-          git push origin main
+          git commit -m "${{ github.event.head_commit.message }}" || echo "No changes to commit"
+          git status
+          git push origin new-main
