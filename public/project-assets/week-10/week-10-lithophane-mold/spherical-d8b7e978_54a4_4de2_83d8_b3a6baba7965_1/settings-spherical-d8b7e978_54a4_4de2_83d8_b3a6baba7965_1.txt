@@ -1,0 +1,15 @@
+Email Address: yufeng-zhao@outlook.com
+Picture: d8b7e978_54a4_4de2_83d8_b3a6baba7965_1.jpg
+Lithophane Resolution: 0.1
+Sphere Diameter: 30
+Picture Angular Height: 147.77
+Picture Angular Width: 360.00
+Maximum Thickness: 2.5
+Minimum Thickness: 0.4
+Cylinder Outer Diameter: 16
+Cylinder Height: 4
+Cylinder Thickness: 2
+Cylinder Ledge Outer Diameter: 16
+Top Hole Outer Diameter: 0
+X Shift: 0.00
+Y Shift: 0.00

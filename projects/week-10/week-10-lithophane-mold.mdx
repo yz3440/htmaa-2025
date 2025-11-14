@@ -1,0 +1,352 @@
+---
+title: "Casting a Spherical Lithophane using a Mold"
+categories: ["weekly assignment"]
+displayedCategory: "lithophane?"
+date: "2025-11-11"
+year: 2025
+displayedDate: "Week 10"
+
+description: "Casting a lithophane using a mold??"
+
+shortDescription: "casting a lithophane using a mold??"
+
+tags:
+  - 3d printing
+  - lithophane
+  - mold
+  - casting
+  - resin
+  - silicone
+  - wax
+  - plaster
+  - gypsum
+  - concrete
+  - plaster of paris
+  - gypsum
+  - concrete
+
+externalLink: null
+videoLink: null
+
+pressLinks: []
+
+publicationLinks: []
+
+priority: 2
+
+roles: []
+
+collaborators: []
+
+image: "/project-assets/week-10/week-10-lithophane-mold/hero.png"
+video: "/project-assets/week-10/week-10-lithophane-mold/demo.mp4"
+
+visible: true
+featured: false
+
+tableOfContents: true
+---
+
+## Assignment
+
+- group assignment:
+  - review the safety data sheets for each of your molding and casting materials,
+    then make and compare test casts with each of them
+  - compare mold making processes
+
+- individual assignment:
+  - design a mold around the process you'll be using,
+    produce it with a smooth surface finish that does not show the production process toolpath,
+    and use it to cast parts
+  - extra credit: use more than two mold parts
+
+## A cast spherical lithophane?
+
+> A lithophane is a thin plaque of translucent material, normally porcelain, which has been moulded to varying thickness, such that when lit from behind the different thicknesses show as different shades, forming an image. - [Wikipedia](https://en.wikipedia.org/wiki/Lithophane)
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-10/week-10-lithophane-mold/Lithophanie_Tischlampe_Porzellan_Vista_Alegre,_D2196.jpg"
+  caption="Lithophane example (Porcelain Vista Alegre, from Wikipedia)"
+/>
+
+I've known you can 3d print a lithophane (and even colored ones with CMYK filament through AMS). What if I can use 3d printing to make a mold for a cast lithophane from clear resin?
+
+[Lithophane Maker](https://lithophanemaker.com/) is a website that allows you to convert an image to a lithophane. Here's a video made by the creator of the tool to show how it works.
+
+<EmbeddedVideo
+  src="https://www.youtube.com/watch?v=k35R3Fur6tk"
+  caption="Lithophane Maker video"
+/>
+
+I'm obssessed with making physical artifact from panorama images, and a spherical lithophane is a perfect fit for this.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/spherical-flat-lithophane.png"
+  caption="Example of both flat and spherical lithophanes"
+  copyright="Lithophane Maker"
+/>
+
+Given there are a lot of high frequency details on top of the lithophane model,
+I think FDM would serve fine in terms of surface finish, because the layer lines
+are not as visible under the details.
+
+Spherical lithophane requires a light srouce from the inside, so I plan to embed a LED inside the lithophane, during the casting process. And I want to cast the final lithophane from clear resin to see how it looks like (I've never seen one online). Does the bumps on the translucent material translate well to the brightness changes?
+
+This will also hit the extra credit requirement of using more than two mold parts - the globe would require two parts, one for the left and one for the right hemisphere.
+
+## Choosing an image
+
+The image of choice is an AI generated street view panorama image of Tokyo. The model I use is DALL-E 2, which is quite antiquated at this point. I wrote the panorama stitching pipeline in a previosu project called [diffused city](https://www.diffused.city) (a geogussr for AI generated street view panoramas). [Here's the image](https://www.diffused.city/diffuse?panoramaRequestId=cae65daf-a30e-46d4-9840-2cfb9ae89151&blurLocation=true) I used in my previous project.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/d8b7e978-54a4-4de2-83d8-b3a6baba7965.jpg"
+  caption="AI generated street view panorama image of Tokyo"
+/>
+
+Here's an panorama viewer of this image (click the shuffle button to see more images and guess the location).
+
+<iframe
+  src="https://www.diffused.city/diffuse?panoramaRequestId=cae65daf-a30e-46d4-9840-2cfb9ae89151&blurLocation=true"
+  className="rounded-lg"
+  width="100%"
+  height="400"
+></iframe>
+
+## Deciding the LED
+
+I was in search for a compact yet bright off-the-shelf LED bulb for a while now. The best option I've come across is [Wedge-Base 12V T10 bulbs](https://blog.headlightrevolution.com/everything-you-need-to-know-about-t10-bulbs/) (commonly used for cars and RVs). This is [the one I bought from Amazon](https://www.amazon.com/dp/B0CM68HH79).
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/t10-bulb.png"
+  caption="Wedge-Base 12V T10 LED bulbs from Amazon"
+/>
+
+I pulled them out from the drawer and measured the diameter to be 13.36mm. For my lithophane mold, I will have the bottom hole to be at least 13.36mm in diameter.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-10/week-10-lithophane-mold/bulb-diameter.jpeg"
+  caption="Measurement of the diameter of the 12V T10 LED bulbs with a caliper (13.36mm)"
+/>
+
+## Making the Lithophane model
+
+I used [Sphere tool in Lithophane Maker](https://lithophanemaker.com/Lithophane%20Sphere.html) to generate the model.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-10/week-10-lithophane-mold/lithophane-maker-params.png"
+  caption="Lithophane Maker parameters"
+/>
+
+Here's my exact parameters. The cylinder (base of the lithophane) inner diameter is `16 - 2 = 14mm`, which is enough to let the LED bulb fit in.
+
+| Parameter                                               | Value                     |
+| :------------------------------------------------------ | :------------------------ |
+| Fit Image to Sphere (Yes/No)                            | Yes (for panorama images) |
+| Lithophane Resolution (mm/pixel)                        | 0.1                       |
+| Sphere Diameter (mm)                                    | 30                        |
+| Picture Angular Height (degrees)                        | 147.77                    |
+| Picture Angular Width (degrees)                         | 360.00                    |
+| Maximum Thickness (mm)                                  | 2.5                       |
+| Minimum Thickness (mm)                                  | 0.4                       |
+| Cylinder Outer Diameter (mm) [set to 0 for no cylinder] | 16                        |
+| Cylinder Height (mm)                                    | 4                         |
+| Cylinder Thickness (mm)                                 | 2                         |
+| Cylinder Ledge Outer Diameter (mm)                      | 75                        |
+| Top Hole Outer Diameter (mm) [set 0 for no top hole]    | 0                         |
+
+The generated model is 10MB in size, so I won't include a live preview. You can reproduce my model by uploading my image and using my parameters. The mdoel download file is [here](/project-assets/week-10/week-10-lithophane-mold/spherical-d8b7e978_54a4_4de2_83d8_b3a6baba7965_1.zip).
+
+## Mold of the Mold
+
+I have great fear modeling the wrong geometry for the mold. So I started with watching a bunch of past HTMAA molding projects. The one that I keep referencing back is [Adrian Torres's project](https://fabacademy.org/2020/labs/leon/students/adrian-torres/week15.html) from 2020.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/adrian-project.png"
+  caption="Adrian Torres's mold for a train"
+  copyright="Adrian Torres"
+/>
+
+I'm crystal clear now that what I need is to slip the original model in half, add boxes around the edges to create a good seal, and put in some registration holes / cylinders.
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/week-10/week-10-lithophane-mold/left-hemisphere.png"
+    caption="Left hemisphere of the lithophane mold mold"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/week-10/week-10-lithophane-mold/right-hemisphere.png"
+    caption="Right hemisphere of the lithophane mold mold"
+  />
+</GridSection>
+
+The modeling process in Fusion 360 is quite straightforward. I made made boxes containing each hemisphere and then taking the boolean intersection with the original model to get the half molds. This step takes a very long time (10 minutes on my decent laptop), because I'm working with a mesh with 735489 faces. If you are following along, I recommend you do the boolean intersection step as late as possible, because if you use the timeline feature to modify anything that happens after those steps, Fusion 360 would likely preventively recalculate the boolean operation. Each "going back in time and change something" would take another 10 minutes to recalculate.
+
+I was using the Prusa MK4S with a black PLA filament. For roughtly two 4cm x 4cm x 2cm molds, it took me about 2 hours to print. The layer lines are somewhat visble but doesn't look too bad surrouded by panorama's bumpy details.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-10/week-10-lithophane-mold/printed-mold-mold.jpeg"
+  caption="Printed lithophane mold molds"
+/>
+
+## Casting the mold
+
+I know I need silicone rubber mold because otherwise the spherical geometry would be impossible to pull out. But I'm pretty late in the game, and when I got to the CBA shop, all the Smooth-On Silicone Rubber mold are used up by other students. I happened to have some random Chinese silicone rubber mold in my lab space [bought from Amazon](https://www.amazon.com/dp/B0D5CZVY18). I ended up using it, the CHANGTIKEJI Silicone Mold Making Kit.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-10/week-10-lithophane-mold/changtikeji.jpeg"
+  caption="CHANGTIKEJI Silicone Mold Making Kit from Amazon"
+/>
+
+After mixing, I poured the silicone rubber into the mold. I think I stirred too much, and I can see some small air bubbles in the silicone rubber. Although I poured it in slowly, I still ended up with some air bubbles.
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/week-10/week-10-lithophane-mold/mixed-1.jpeg"
+    caption="Mixed silicone rubber"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/week-10/week-10-lithophane-mold/poured-1.jpeg"
+    caption="Poured silicone rubber into the mold"
+  />
+</GridSection>
+
+Which is why I used the vacuum chamber to remove the air bubbles. In the beginning, there are a lot of bubbles, but it eventually settles down. Partially because I stirred too hard during mixing., another reason is that the mold has a lot of tiny bumps on the sphere surface that can catch the air bubbles. I'm not surprised by the bubbles.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/vacuum-4x.mp4"
+  caption="Vacuum chamber to remove the air bubbles (4x speed), a lot of bubbles in the beginning"
+/>
+
+This is the end state before I turned off the vacuum chamber. You still see some small bubbles, but they don't really pop out anymore.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/vacuum-end.jpeg"
+  caption="End state before I turned off the vacuum chamber"
+/>
+
+After I pull it out of the vacuum chamber and repressurize the mold, the bubble are a lot less visible (since they are compressed by the atmosphere pressure). I let it sit for 6 hours to cure.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/cure-start.jpeg"
+  caption="Start of the curing process"
+/>
+
+## Soldering the LED
+
+In order to make the T10 LED bulb plug and play, I need to solder a few things together. Here's the parts I used:
+
+| Part                                                                                               | Notes                          | Quantity |
+| -------------------------------------------------------------------------------------------------- | ------------------------------ | -------- |
+| [T10 LED bulb ](https://www.amazon.com/dp/B0CM68HH79)                                              | Warm white                     | 1        |
+| [T10 Socket Breakout Plug](https://www.amazon.com/dp/B0DR768ZG3)                                   | For the T10 socket             | 1        |
+| [PVC Covered Copper Wire](https://www.amazon.com/dp/B0CXXX4NVB)                                    | For the clean transparent look | 1        |
+| [AITRIP 5pcs Type-C MT3608 DC-DC Adjustable Boost Module 2A](https://www.amazon.com/dp/B0C6KHYJJN) |                                | 1        |
+| [Short USB C-to-USB A cable](https://www.amazon.com/dp/B08HT413RC)                                 |                                | 1        |
+| [USB Wall Plug DC 5V 2A](https://www.amazon.com/dp/B0F2J66QKG)                                     |                                | 1        |
+
+I know I need to have a 12V power supply to power the LED bulb, but I didn't want to invest in a dedicated power supply for each LED bulb. So I'm getting a cheap boost module designed for 5V USB-C input for maximum flexibility.
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/week-10/week-10-lithophane-mold/solder-1.jpeg"
+    caption="My sloppy solder job for the socket <-> wire connection with some help of the heat shrink tubing"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/week-10/week-10-lithophane-mold/solder-2.jpeg"
+    caption="I'm just tieing the other ends into the holes on the boost module, not even soldering them"
+  />
+</GridSection>
+
+Despite the sloppy solder job, the circuit is working pretty well. I forgot to take a picture of its working state right after soldering, but you will see it in the final result.
+
+## Casting the lithophane
+
+Six hours later, I pulled the mold out of the mold. It was a very tight pull and I don't have a leverage point to pull it out. I ended up using a flat screwdriver to scrape out the edges and then use my hands to pull it out completely.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-10/week-10-lithophane-mold/mold-out.jpeg"
+  caption="One mold pulled out, and I'm using a flat screwdriver to scrape out the other mold"
+/>
+
+Here are the two molds out of the molds of the molds. You can see that my registration cynlinder are too tall and flimsy.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-10/week-10-lithophane-mold/mold-out-2.jpeg"
+  caption="Vacuum chamber to remove the air bubbles, a lot of bubbles in the beginning"
+/>
+
+It was impossible to stick them into the holes on the other half. But I have pretty good confidence that I can register the mode by aligning the edges of the box. I decided to cut the cylinders off.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-10/week-10-lithophane-mold/cut-registration.jpeg"
+  caption="Cutting off the registration cylinders with scissors"
+/>
+
+I ended up taping the two molds together to apply pressure and get a good seal after aligning the edges. I also test fitted the LED bulb into the mold.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-10/week-10-lithophane-mold/taped-molds.jpeg"
+  caption="Taping the two molds together to apply pressure and get a good seal after aligning the edges"
+/>
+
+The cast material I used is Smooth-On Smooth-Cast 325, 326, 327 Clear Amber Liquid Plastic (PART A), Smooth-Cast 327 Colormatch Liquide Plastic (PART B).
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-10/week-10-lithophane-mold/cast-material.jpeg"
+  caption="Smooth-Cast 325, 326, 327 Clear Amber Liquid Plastic (PART A), Smooth-Cast 327 Colormatch (PART B)"
+/>
+
+I mixed equal parts of the two materials and poured it into the mold. And then I dipped my LED into the cast material to make sure it's fully covered.
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/casting.jpeg"
+  caption="Casting the lithophane"
+/>
+
+After an hour, I remove the tape and pull out the end result - a clear translucent spherical lithophane with a bright warm white LED bulb inside. It's not 100% round since I might have squeezed the mold too hard during the taping process.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-10/week-10-lithophane-mold/end-cast.jpeg"
+  caption="End result - a clear translucent spherical lithophane with a bright warm white LED bulb inside"
+/>
+
+Anyways, let's light it up!
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/week-10/week-10-lithophane-mold/demo.mp4"
+  caption="Lighting up the lithophane"
+/>
+
+It does light up but it's hard to see the details of the lithophane... I should have thought of this before casting.
+
+## Design Files
+
+- [My AI Generated Image](/project-assets/week-10/week-10-lithophane-mold/d8b7e978-54a4-4de2-83d8-b3a6baba7965.jpg)
+- [My Fusion 360 Design](/project-assets/week-10/week-10-lithophane-mold/20251111_Lithophane_Mold.f3d)
+- [My Lithophane Model](/project-assets/week-10/week-10-lithophane-mold/spherical-d8b7e978_54a4_4de2_83d8_b3a6baba7965_1.zip)
