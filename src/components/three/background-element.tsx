@@ -78,7 +78,7 @@ export default function BackgroundElement() {
             modulationOffset={0}
           />
         </EffectComposer>
-        <RotatingSphere />
+        {/* <RotatingSphere /> */}
       </Canvas>
     </div>
   );
