@@ -40,7 +40,7 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
   },
   {
     title: "about",
-    href: "https://yufengzhao.com/about",
+    href: "/about/",
     className: "cursor-pointer",
   },
 ];
