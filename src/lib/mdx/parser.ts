@@ -74,7 +74,7 @@ function getMDXData(dir: string): ProjectEntry[] {
   const mdxFiles = getMDXFilesRecursive(dir);
   return mdxFiles.map((file) => {
     const { metadata, content, tableOfContents } = readMDXFile(file);
-    const slug = slugify(metadata.title);
+    const slug = slugify(metadata.displayedDate + " " + metadata.title);
 
     return {
       metadata,
