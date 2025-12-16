@@ -1,0 +1,255 @@
+---
+title: "Optical Sensor to a Microcontroller"
+categories: ["weekly assignment"]
+displayedCategory: "making a pcb"
+date: "2025-10-14"
+year: 2025
+displayedDate: "Week 6"
+
+description: "Making a PCB for an embedded microcontroller system."
+
+shortDescription: "making a PCB for an embedded microcontroller system."
+
+tags:
+  - kicad
+  - eda
+  - xiao rp2040
+  - pixart pwm3360
+  - pcb
+  - microcontroller
+  - sensor
+
+externalLink: null
+videoLink: null
+
+pressLinks: []
+
+publicationLinks: []
+
+priority: 2
+
+roles: []
+
+collaborators: []
+
+image: "/project-assets/week-5/week-5-eda-design/yufeng-pcb-4-3d.png"
+video: "/project-assets/week-5/week-5-eda-design/yufeng-pcb-4-3d.mp4"
+
+visible: true
+featured: false
+
+tableOfContents: true
+---
+
+## Assignment
+
+[Assignment Link](https://academy.cba.mit.edu/classes/electronics_production/index.html)
+
+- group assignment:
+  - characterize the design rules for your in-house PCB production process
+  - submit a PCB design to a board house
+- individual assignment:
+  - make and test an embedded microcontroller system that you designed
+  - extra credit: make it with another process
+
+## From last week
+
+[Last week, I designed a PCB](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/week-5-getting-started-with-kicad) for the XIAO RP2040 and the PixArt PMW3360 sensor. This week, I'm fabricating it using the in-house milling machine.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-5/week-5-eda-design/yufeng-pcb-4.png"
+  caption="Yufeng's PCB design from week 5"
+/>
+## Redesigning the PCB
+
+### The Gerber Export Problem
+
+My first step was to export the Gerber files from my week 5 KiCad project. I followed the standard export procedure and uploaded the files to [gerber2img](https://quentinbolsee.pages.cba.mit.edu/gerber2img/), a tool that converts Gerber files to images for milling.
+
+<GridSection columnCount={2}>
+  <Media
+    src="/project-assets/week-6/week-6-making-pcb/gerber2img-empty-result-exterior.png"
+    caption="gerber2img export: exterior layer looks correct, but the PMW3360 sensor cutout is missing"
+  />
+  <Media
+    src="/project-assets/week-6/week-6-making-pcb/gerber2img-empty-result-trace.png"
+    caption="gerber2img export: trace layer is completely empty (no copper traces detected)"
+  />
+</GridSection>
+
+As you can see above, the exterior layer image from gerber2img does not show the expected cutout for the PMW3360 sensor, and the trace layer is completely empty—no copper traces at all. This indicated that gerber2img couldn’t interpret my week 5 Gerber files properly. After some debugging, I realized this might be because my week 5 project built directly on top of [jfedor2's open source schematics](https://github.com/jfedor2/rp2040-pmw3360), rather than starting from scratch. Some legacy settings or nonstandard layering likely caused these export issues.
+
+### Starting from Scratch
+
+Rather than spending more time debugging, I decided to start fresh. This time, I would build the entire project from the ground up, ensuring clean exports.
+
+#### PMW3360 Symbol and Footprint
+
+For the PMW3360 sensor, I downloaded the symbol and footprint from [SnapMagic](https://www.snapeda.com/parts/PMW3360DM-T2QU/PixArt/view-part/). Last week, I had concerns about this footprint missing some pins, but I decided to give it another look.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/week-6/week-6-making-pcb/snapmagic-pmw3360-import.png"
+  caption="Importing PMW3360 symbol and footprint from SnapMagic into KiCad"
+/>
+
+After importing them into KiCad and cross-referencing with the datasheet, the footprint appeared correct for my needs.
+
+#### The Voltage Regulator Challenge
+
+As discussed last week, the PMW3360 requires a 1.8V power supply, which isn't available in the fab lab inventory. I needed to source my own voltage regulator.
+
+I found the [AMS1117 series regulators on Amazon](https://www.amazon.com/dp/B083TDQBPN) - a kit containing multiple voltage variants (1.2V, 1.5V, 1.8V, 2.5V, 3.3V, 5V) in SOT-223 packages. The AMS1117-1.8 would be perfect for stepping down the XIAO RP2040's 3.3V output to the required 1.8V for the sensor.
+
+<Media
+  src="/project-assets/week-6/week-6-making-pcb/ams1117-sot223.png"
+  caption="AMS1117 voltage regulator in SOT-223 package from Amazon"
+/>
+
+Fortunately, KiCad has the AMS1117 symbol and footprint in its default library, so I didn't need to create custom components.
+
+### Schematics Design
+
+Here's my final schematics for the PCB. The key components are:
+
+- **XIAO RP2040**: The microcontroller board with SPI interface
+- **PMW3360**: The optical sensor requiring SPI communication
+- **AMS1117-1.8**: Voltage regulator stepping 3.3V down to 1.8V
+- **Capacitors**: For power supply stability
+- **0Ω Resistors**: Used as jumpers for cleaner routing
+
+<Media
+  src="/project-assets/week-6/week-6-making-pcb/yufeng-schematics.png"
+  caption="Final schematics for the PCB"
+/>
+
+The main connections:
+
+- SPI pins (MISO, MOSI, SCLK) connect the RP2040 to the PMW3360
+- NCS (Not Chip Select) connects to a GPIO pin for software control
+- 3.3V from XIAO feeds into the AMS1117 regulator
+- 1.8V output from regulator powers the PMW3360
+- Ground plane connects all components
+
+### PCB Layout Design
+
+#### The 0Ω Resistor Strategy
+
+One of my main goals this time was to create a cleaner routing topology. Last week's design had some convoluted paths due to the single-layer constraint. This time, I liberally used 0Ω resistors as jumpers to avoid routing conflicts.
+
+<Media
+  src="/project-assets/week-6/week-6-making-pcb/yufeng-pcb.png"
+  caption="PCB layout with 0Ω resistors for routing"
+/>
+
+The 0Ω resistors act as bridges, allowing traces to "jump over" each other on a single-layer board. While this adds more components to solder, it makes the routing much more manageable.
+
+#### The Cutout Under the Sensor
+
+The PMW3360 is an optical sensor that needs a clear view of the surface below it. This requires a rectangular cutout in the PCB directly underneath the sensor's optical window.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/week-6/week-6-making-pcb/yufeng-pcb-3d.png"
+  caption="Rectangular cutout in PCB for optical sensor"
+/>
+
+## Fabrication
+
+### Gerber Export
+
+With the new design complete, I exported the Gerber files again and uploaded them to [gerber2img](https://quentinbolsee.pages.cba.mit.edu/gerber2img/).
+
+<GridSection columnCount={2}>
+  <Media
+    src="/project-assets/week-6/week-6-making-pcb/new-exterior.png"
+    caption="gerber2img export: exterior layer looks correct, but the PMW3360 sensor cutout is missing"
+  />
+  <Media
+    src="/project-assets/week-6/week-6-making-pcb/new-trace.png"
+    caption="gerber2img export: trace layer looks great!"
+  />
+</GridSection>
+
+Much better! The traces, pads, and drill holes all appeared correctly... except for one thing.
+
+#### The Missing Cutout
+
+When I checked the "edge cut" layer image, the rectangular cutout under the PMW3360 sensor was still not showing up. But you've seen the 3D view in KiCad, which rendered the cutout perfectly. This suggested the issue was with the gerber2img tool's interpretation, not my footprint or PCB design.
+
+#### The Photoshop Workaround
+
+Rather than diving into debugging the tool, I decided on a practical workaround. I exported the edge cut image from gerber2img, opened it in Photoshop, and manually added a black-filled rectangle where the cutout should be.
+
+<Media
+  src="/project-assets/week-6/week-6-making-pcb/new-exterior-before-after.png"
+  caption="New exterior layer image with the cutout manually added in Photoshop"
+/>
+
+### Generating Toolpaths with Mods
+
+With the corrected images ready, I used [mods](https://modsproject.com/) to generate the toolpaths for the Carvera CNC mill.
+
+<Media
+  src="/project-assets/week-6/week-6-making-pcb/mods-interface.png"
+  caption="Mods interface for generating toolpaths"
+/>
+
+The workflow in mods:
+
+1. Right click and select `programs` -> `open programs` -> `Carvera - mill 2D PCB`
+2. Import the trace and exterior PNG images from gerber2img (double check if the dpi is set to 1000)
+3. Click `calculate` under the "Calculate ↓" section.
+4. The toolpath preview will show up, and you will automatically download the toolpath file `job.nc`
+
+<Media
+  src="/project-assets/week-6/week-6-making-pcb/mods-toolpath-preview.png"
+  caption="Toolpath preview showing correct routing around the cutout"
+/>
+
+The toolpath preview looked perfect - including the drill path around the rectangular cutout I had manually added.
+
+### Milling the PCB
+
+Time to mill! I loaded the FR-1 copper board into the Carvera and ran the toolpaths.
+
+<Media
+  src="/project-assets/week-6/week-6-making-pcb/carvera-milling-process.mp4"
+  caption="Carvera milling the PCB"
+/>
+
+The milling process went smoothly:
+
+1. **Trace milling**: Isolated the copper traces
+2. **Drilling**: Created holes for through-hole components and vias
+3. **Outline cut**: Cut the board to size and created the rectangular cutout
+
+<Media
+  src="/project-assets/week-6/week-6-making-pcb/milled-pcb-top.jpeg"
+  caption="Milled PCB - top view"
+/>
+
+The rectangular cutout came out clean, confirming that the manual Photoshop edit worked as intended.
+
+The only problem is that the pads for the PMW3360 sensor pins are connected to each other, so I needed to use a cutter to manually separate them before assembly.
+
+## Giving Up
+
+By the time I had a chance to revisit this project and fix the connected pads, I had already decided that my final project wouldn't need this optical sensor as part of the design. Rather than spending more time debugging and fixing this board, I decided to put it aside for now.
+
+The rest of the PCB fabrication assignment requirements are fulfilled in [Week 12](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/week-12-simple-i2c-communication/), where I designed, fabricated, and thoroughly tested another PCB board.
+
+## References
+
+- [AMS1117 Datasheet](https://mm.digikey.com/Volume0/opasdata/d220001/medias/docus/5011/AMS1117.pdf)
+- [gerber2img Tool](https://quentinbolsee.pages.cba.mit.edu/gerber2img/)
+- [Mods Project](https://modsproject.com/)
+- [SnapMagic PMW3360](https://www.snapeda.com/parts/PMW3360DM-T2QU/PixArt/view-part/)
+- [PixArt PMW3360 Datasheet](https://d3s5r33r268y59.cloudfront.net/datasheets/9604/2017-05-07-18-19-11/PMS0058-PMW3360DM-T2QU-DS-R1.50-26092016._20161202173741.pdf)
+- [AMS1117 Regulators on Amazon](https://www.amazon.com/dp/B083TDQBPN)
+
+## Design Files
+
+- [KiCad Project Files (Week 6)](/project-assets/week-6/week-6-making-pcb/yufeng-trackball-pcb-week6.zip)
+- [Gerber Files](/project-assets/week-6/week-6-making-pcb/gerber-files.zip)
