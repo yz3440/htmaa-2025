@@ -3,8 +3,7 @@
 import React from "react";
 import { type ProjectMetadata } from "@/lib/mdx";
 import { formatDate } from "@/lib/mdx";
-// import Link from "next/link";
-import { Link } from "next-view-transitions";
+import Link from "next/link";
 // import { ProjectHero } from "./project-hero";
 import { HoverEffectContainer } from "@/components/specialized-ui/hover-effect-container";
 // import { ProjectFrontmatters } from "./project-frontmatters";
