@@ -54,7 +54,9 @@ export function Navigation({
 }: NavigationProps) {
   const pathname = usePathname();
   const { search } = useSearch();
-  const currentUrl = search ? `${pathname}?search=${search}` : pathname;
+  // Encode search with + for spaces to match nav href format
+  const encodedSearch = search.replace(/ /g, "+");
+  const currentUrl = search ? `${pathname}?search=${encodedSearch}` : pathname;
 
   const HeadingTag = layoutContext === "home" ? "h1" : "div";
 
