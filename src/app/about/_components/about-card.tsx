@@ -11,7 +11,7 @@ import { cn } from "@/lib/utils";
 import { InlineLink } from "@/components/ui/inline-link";
 import { type LayoutContext } from "@/components/layout";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
-import Image from "next/image";
+import { Image } from "@/components/image";
 import { AboutFrontmatters } from "./about-frontmatters";
 
 export function AboutCard({
