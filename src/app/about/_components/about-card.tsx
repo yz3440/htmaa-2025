@@ -44,7 +44,7 @@ export function AboutCard({
         {/* TOP - PROJECT DATE & CATEGORY */}
         <div className="font-condensed flex justify-between pb-2">
           <h2>1998 - present</h2>
-          <h2 className="relative italic text-white">
+          <h2 className="relative italic">
             <span className="low-highlight backdrop-blur-sm">person</span>
           </h2>
         </div>
