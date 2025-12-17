@@ -1,15 +1,24 @@
 "use client";
 
-import { useCallback, useMemo, useState } from "react";
+import { useCallback, useMemo, useState, useEffect, useRef } from "react";
 import { cn } from "@/lib/utils";
 import { ProjectCard } from "@/components/project-block/project-card";
 import { type ProjectEntry } from "@/lib/mdx/parser";
 import { Button } from "@/components/ui/button";
 import { ShuffleIcon } from "lucide-react";
 import { InlineLink } from "@/components/ui/inline-link";
+import { useSearch } from "@/components/search-context";
 
 export default function HomeClient({ projects }: { projects: ProjectEntry[] }) {
-  const [search, setSearch] = useState("");
+  const { search, setSearch } = useSearch();
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // Sync input value when search changes externally (e.g., nav click)
+  useEffect(() => {
+    if (inputRef.current && inputRef.current.value !== search) {
+      inputRef.current.value = search;
+    }
+  }, [search]);
   const filteredProjects = projects.filter((project) => {
     const projectText =
       project.metadata.title +
@@ -63,7 +72,9 @@ export default function HomeClient({ projects }: { projects: ProjectEntry[] }) {
     <>
       <div className="sticky top-6 z-10 mx-1 mb-6 flex items-center justify-between gap-2">
         <input
+          ref={inputRef}
           type="search"
+          defaultValue={search}
           placeholder={
             searchBarInteracted
               ? "Just kidding, this is a search bar"
@@ -79,10 +90,7 @@ export default function HomeClient({ projects }: { projects: ProjectEntry[] }) {
             setSearchBarInteracted(true);
           }}
           onChange={(e) => {
-            const timeoutId = setTimeout(() => {
-              setSearch(e.target.value);
-            }, 300);
-            return () => clearTimeout(timeoutId);
+            setSearch(e.target.value);
           }}
         />
       </div>

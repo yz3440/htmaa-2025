@@ -10,6 +10,7 @@ import {
 import { cn } from "@/lib/utils";
 import { env } from "@/env.js";
 import BackgroundElement from "@/components/three/background-element";
+import { SearchProvider } from "@/components/search-context";
 import { Suspense } from "react";
 
 export const metadata: Metadata = {
@@ -54,8 +55,10 @@ export default function RootLayout({
     >
       <head></head>
       <body className="">
-        {children}
-        <Suspense fallback={<div></div>}>
+        <Suspense fallback={null}>
+          <SearchProvider>{children}</SearchProvider>
+        </Suspense>
+        <Suspense fallback={null}>
           <BackgroundElement />
         </Suspense>
       </body>

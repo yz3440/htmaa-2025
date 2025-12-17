@@ -9,6 +9,7 @@ import { Link } from "next-view-transitions";
 import { usePathname } from "next/navigation";
 import { type LayoutContext } from "@/components/layout";
 import { ExternalLinkIcon } from "lucide-react";
+import { useSearch } from "@/components/search-context";
 
 export interface NavigationProps extends React.HTMLAttributes<HTMLDivElement> {
   tableOfContents?: TableOfContents;
@@ -30,7 +31,7 @@ const NAVIGATION_ITEMS: NavigationItem[] = [
   },
   {
     title: "final project",
-    href: "/final-project/",
+    href: "/?search=final+project",
     className: "cursor-zoom-in",
   },
   {
@@ -52,6 +53,8 @@ export function Navigation({
   ...props
 }: NavigationProps) {
   const pathname = usePathname();
+  const { search } = useSearch();
+  const currentUrl = search ? `${pathname}?search=${search}` : pathname;
 
   const HeadingTag = layoutContext === "home" ? "h1" : "div";
 
@@ -103,7 +106,7 @@ export function Navigation({
           {NAVIGATION_ITEMS.map((item) => (
             <div key={item.title} className={cn("mt-2")}>
               <InlineLinkWithHighlight
-                currentPath={pathname}
+                currentUrl={currentUrl}
                 href={item.href}
                 className={item.className}
               >
@@ -114,7 +117,7 @@ export function Navigation({
                   {item.children.map((child) => (
                     <InlineLinkWithHighlight
                       key={child.title}
-                      currentPath={pathname}
+                      currentUrl={currentUrl}
                       href={child.href}
                     >
                       {child.title}
@@ -154,23 +157,24 @@ export function Navigation({
 }
 
 function InlineLinkWithHighlight({
-  currentPath,
+  currentUrl,
   href,
   children,
   className,
 }: {
-  currentPath: string;
+  currentUrl: string;
   href: string;
   children: React.ReactNode;
   className?: string;
 }) {
   const shouldTargetBlank = href.startsWith("http");
+  const isActive = currentUrl === href;
   return (
     <InlineLink
       href={href}
       target={shouldTargetBlank ? "_blank" : "_self"}
       className={cn(
-        currentPath === href && "font-bold text-green-500",
+        isActive && "font-bold text-green-500",
         "group",
         className,
       )}
