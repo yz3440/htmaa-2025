@@ -254,7 +254,10 @@ export function ProjectFrontmatters({
             <FrontmatterExternalLink href={metadata.videoLink} title="Watch" />
           )}
           {metadata.githubLink && (
-            <FrontmatterExternalLink href={metadata.githubLink} title="Code" />
+            <FrontmatterExternalLink
+              href={metadata.githubLink}
+              title="Code on Github"
+            />
           )}
           {metadata.socialMediaLink && (
             <FrontmatterExternalLink
