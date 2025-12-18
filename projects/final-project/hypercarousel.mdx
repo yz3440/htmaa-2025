@@ -48,6 +48,200 @@ HyperCarousel is a addon for the Kodak Carousel projectors and a novel slide mou
 
 As I mentioned in the [roadmap](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/week-9-hypercarousel-roadmap/), I'm planning to build a working but still MVP version of HyperCarousel.
 
-## Sorry
+## HyperSlide Design
 
-TODO: Write the doc! (sorry spent too much time on the video, still working on the documentation)
+HyperSlide is a custom slide mount design that enables hypertext navigation in the Kodak Carousel. Each slide mount contains a lookup table that maps hyperlink numbers to destination slide numbers — essentially metadata attached to each slide.
+
+### V0: Testing the Waters
+
+I started by buying [Matin 35mm Slide Mounts 100 Pieces - Glassless White](https://www.amazon.com/dp/B008QT9AV2) to understand the physical constraints of slide mounts.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-0-matin-slide-mount.png"
+  caption="Matin plastic slide mounts — the starting point for understanding dimensions"
+/>
+
+I checked some references on slide film dimensions. According to ["How to Tell Which Type of Slides You Have"](https://kodakdigitizing.com/blogs/news/how-to-tell-which-type-of-slides-you-have) by Dillon Wallace, the 35mm film imaging size is 36mm × 24mm, but the entire film for one shot including the sprocket holes is 36mm × 35mm.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-1-film-size-diagram.png"
+  caption="35mm film dimension reference — imaging area vs. full frame with sprocket holes"
+/>
+
+For the transparency film, I bought [Caydo 8.5 x 11 Inch A4 Transparent Film for Screen Printing](https://www.amazon.com/dp/B0DFY8FWTX) (I got the A3 11×17 inch version, but they no longer sell that variant).
+
+I'm most comfortable designing in Figma, but designing for print isn't a native feature. My workaround is to assign each pixel a real physical unit — in this design I'm using 1px as 1mm. So I have a 2794×4318 canvas and each film block is 360 × 350 (36mm × 35mm). When I export, I use 4× resolution to keep the text sharp, and when I print, I set the paper to 11×17 and scale to cover 100%.
+
+The content of these slides is mostly sourced from Wikipedia. Text that's underlined indicates hyperlinks connecting to other slides.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-2-slide-for-print-figma-design-screenshot.png"
+  caption="Figma design for slide content — underlined text represents hyperlinks"
+/>
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-3-slide-printed-on-film.jpeg"
+  caption="Slides printed on inkjet transparency film"
+/>
+
+Here's a slide about Center for Bits and Atoms mounted in a Matin mount:
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-4-slide-mounted.jpeg"
+  caption="A mounted HyperSlide about CBA"
+/>
+
+And here's a slide about Neil Gershenfeld projected through the Kodak Carousel 600:
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-5-slide-projected.jpeg"
+  caption="Neil Gershenfeld slide projected through the Carousel"
+/>
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-99-figma-design-4x-export.jpg"
+  caption="V0 complete design file (4× export)"
+/>
+
+In the original roadmap, I wanted to use a mouse/trackball interaction to control a cursor on the projector. So I did some testing — I drew a cursor on an empty piece of slide and put both the Neil slide and cursor slide into the projector. Turns out (obviously) the projector couldn't focus on both slides at the same time on the projection plane. This led to my following design that gives up on the cursor idea and settles on the numpad & lookup table compromise.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-6-slide-cursor-dual-slide-test.mp4"
+  caption="Testing dual slides for cursor overlay — spoiler: focus doesn't work that way"
+/>
+
+### V1: The Punchcard Inspiration
+
+I was originally thinking I'd want to use a punchcard. This is because I want everything as analog as possible, and the IBM Punchcard was a well-established standard.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-0-ibm-punchcard.jpg"
+  caption="IBM Punchcard — the original metadata storage"
+/>
+
+I even found a variation with a slide embedded in a punchcard (taking up 1/3 of punch space, using the same size as IBM punchcard). These are called aperture cards, used for archiving image documents like blueprints efficiently with the help of sorting and indexing provided by the punch. Basically metadata-attached microfilms — something similar to what I want to achieve here.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-1-aperture-card.jpg"
+  caption="Aperture card — historical precedent for combining film with punch data"
+/>
+
+But then I'd need to use optical sensors to read it. I wasn't ready to die on this hill. I compromised by allowing myself to use a camera system via ESP32, so I designed a human-readable table with some marks for camera registration. A person can just write the lookup table (which link goes to which slide, or a hyperlink index → slide number mapping) on the slide mount.
+
+So this is my design: 5 mounts laid out on a letter-sized canvas. I made the width the same as the slide mount requirement (2 inch / 51.3mm) and doubled the height to 4 inch (102.6mm). I located the 36×24mm film cutout at the right location and put a two-column table on top (one says `link #`, the other says `to #`).
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-2-figma-design-letter-size.jpg"
+  caption="V1 design layout — 5 HyperSlide mounts on letter-sized cardstock"
+/>
+
+I used [White Cardstock 8.5 x 11, 230gsm Cover Cardstock Paper, 85 Lb Heavy Card](https://www.amazon.com/dp/B0CJX2153R) for the material.
+
+I put my design in the xTool P2 laser cutter. I wanted to engrave the table and cut the mount contour and film slot. I realized the text part is recognized as engrave, and all the rest are score. I needed to manually assign the text to engrave, the table frame lines to score, and the outer lines to cut.
+
+Also, my SVG did not preserve dimensions well. I had to manually rescale the shapes so that the width of each one is 50mm.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-3-xTool-setting.jpeg"
+  caption="xTool Creative Space settings for the laser cut"
+/>
+
+| Operation | Power | Speed   |
+| --------- | ----- | ------- |
+| Cut       | 80%   | 70mm/s  |
+| Score     | 4%    | 160mm/s |
+| Engrave   | 4%    | 225mm/s |
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-4-card-results-in-cutter.jpeg"
+  caption="Five HyperSlide mounts fresh off the laser cutter"
+/>
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-5-hyperslide-size-comparision-with-matin.jpeg"
+  caption="HyperSlide (left) vs. Matin mount (right) — dimensions should match"
+/>
+
+I taped my film and the slide mount together:
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-6-hyperslide-taped.jpeg"
+  caption="Film transparency taped to cardstock mount"
+/>
+
+I tested the film in my projector... and it got stuck halfway. I think it might be too wide?
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-7-test-stuck.mp4"
+  caption="First test — slide gets stuck in the projector mechanism"
+/>
+
+I used my caliper to measure the Matin slide mount, and it reads 50.15mm — same as what I had. But paper flexes more than plastic. So I decided to trim my cardstock on both sides with scissors and test again.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v1-8-test-smooth-trimmed.mp4"
+  caption="After trimming — smooth sliding through the projector!"
+/>
+
+It worked! The slide goes up and down in the projector smoothly.
+
+[Download V1 design SVG](/project-assets/final-project/hypercarousel/0-hyper-slide/v1-0-figma-design-export.svg) (don't use this though — the width is weird)
+
+### V2: Getting the Width Right
+
+I changed the width from 50mm to 48mm and everything works now. I used the same laser settings and made ten of them on two pieces of letter-sized cardstock.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v2-1-xTool-toolpath-preview.jpeg"
+  caption="xTool toolpath preview for batch cutting"
+/>
+
+Here's a 10× speed timelapse of the cutting process:
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v2-2-cutting-timelapse.mp4"
+  caption="Timelapse of laser cutting 10 HyperSlide mounts"
+/>
+
+And I used glue stick this time to mount the film. A lot cleaner!
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v2-3-gluestick-mount.jpeg"
+  caption="Glue stick mounting — much cleaner than tape"
+/>
+
+[Download V2 design SVG](/project-assets/final-project/hypercarousel/0-hyper-slide/v2-0-figma-export.svg)
+
+### V3: Seven-Segment Marking Attempt
+
+Later in the project I was having trouble with digit recognition, so I decided to change the design to include some marking to help users write seven-segment digits at designated locations.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v3-0-film-mounts.jpeg"
+  caption="V3 design with seven-segment digit guides scored on the mount"
+/>
+
+I did not end up using these because the scoring marks are too dark even at 200mm/s and 1% power setting, which creates high contrast and messes with my CV algorithm even more. I'll talk about this in detail in the lookup-table recognition section below.
+
+[Download V3 design SVG](/project-assets/final-project/hypercarousel/0-hyper-slide/v3-1-figma-export.svg)
