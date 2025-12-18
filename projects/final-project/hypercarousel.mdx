@@ -268,3 +268,138 @@ Turns out the Kodak Carousel 600 fits _perfectly_ in a 276×276mm square. Like, 
     caption="Perfect fit — 276×276mm square cradles the Carousel"
   />
 </GridSection>
+
+## Button Pressor Servo
+
+The Kodak Carousel has physical buttons for advancing slides forward and backward. Rather than hacking into the electronics, I decided to just... press the buttons with a servo. Sometimes the dumbest solution is the best solution.
+
+The servo I'm using is an [ANNIMOS 20KG Digital Servo](https://www.amazon.com/ANNIMOS-Digital-Waterproof-DS3218MG-Control/dp/B076CNKQX4) — high torque, full metal gear, waterproof (overkill for button pressing, but I had it lying around). It should be more than enough to press the button.
+
+### V0: Initial Design
+
+I planned to mount the servo on the aluminum extrusion near the film advancement button. First step: measure the servo. The body (not including the mounting wings) is 39.67mm × 19.88mm. The mounting screws are M3, so I'm using 3.4mm holes.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/v0-0-measuring-servo.jpeg"
+  caption="Measuring the servo body — 39.67mm × 19.88mm"
+/>
+
+I modeled everything parametrically in Fusion 360 using 40 × 20mm as the nominal dimensions. The bottom is shaped to sit on top of the extrusion while leaving clearance for the projector body (which sticks out a bit on the sides).
+
+<GLBViewer
+  width="66%"
+  src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/v0.glb"
+  caption="V0 servo holder design"
+  cameraPosition={[80, -120, 200]}
+  backgroundColor="gray"
+/>
+
+[Download V0 STL](/project-assets/final-project/hypercarousel/2-button-pressor-servo/v0.stl)
+
+I forgot to add a notch for the cable coming out from the motor. Back to Fusion 360...
+
+### V1: Cable Notch
+
+Added the notch for the cable, plus some curves on the edges hoping it would make them thicker for better structural integrity.
+
+<GridSection columnCount={2}>
+  <GLBViewer
+    width="100%"
+    src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/v1.glb"
+    caption="V1 with cable notch"
+    cameraPosition={[80, -10, 200]}
+    objectPosition={[0, -50, 0]}
+    backgroundColor="gray"
+
+/>
+
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/v1-works.jpeg"
+    caption="V1 fit test — it works!"
+  />
+</GridSection>
+
+[Download V1 STL](/project-assets/final-project/hypercarousel/2-button-pressor-servo/v1.stl)
+
+It works great, but I think it would look nicer if the model had recesses where the M3 nuts go.
+
+### V2: Nut Recesses
+
+Added hexagonal pockets for the nuts to sit flush. All the dimensions are parameterized in the Fusion 360 file so they're easy to tweak.
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/v2-design-with parameters.jpeg"
+    caption="Fusion 360 parameters — everything is adjustable"
+  />
+  <GLBViewer
+    width="100%"
+    src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/v2.glb"
+    caption="V2 with nut recesses"
+    cameraPosition={[80, -10, 200]}
+    objectPosition={[0, -50, 0]}
+    backgroundColor="gray"
+
+/>
+
+</GridSection>
+
+The previous prints were black PLA. For the final version, I switched to [OVERTURE Rock PLA Marble filament](https://www.amazon.com/dp/B0F4RCJ659) — it has mixed particles that give a white pebble stone texture. Bonus: it hides layer lines really well.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/v2-test-fit-on-aluminum-extrusion.jpeg"
+  caption="V2 test fit on aluminum extrusion — clean marble finish"
+/>
+
+[Download V2 STL](/project-assets/final-project/hypercarousel/2-button-pressor-servo/v2.stl) | [Download Fusion 360 file](/project-assets/final-project/hypercarousel/2-button-pressor-servo/button-pressor-servo-holder.f3d)
+
+### Software Test
+
+Before integrating with the main board, I wrote a standalone test program to verify the servo works. It runs on an ESP32 (XIAO ESP32-S3) and serves a web interface for controlling the servo — useful for finding the right angles without recompiling. I tested this on the MLDEV WiFi network at Media Lab.
+
+The code sets up a simple web server with two main features: a slider for direct angle control, and a sequence player that can run through a list of angles with configurable delays between each step. The sequence format is just `angle,delay_ms` per line, which made it easy to test different button-pressing motions.
+
+Key configuration — the servo rests at 120° and swings down to 0° to press the button:
+
+```cpp
+// Servo positions and speed
+#define RESTING_POSITION 120    // Resting position (degrees)
+#define ACTIVATION_POSITION 0   // Activation position (degrees)
+#define SERVO_SPEED_MS 800      // Time to move from 0 to 120 degrees (ms)
+#define SERVO_MS_PER_DEGREE (SERVO_SPEED_MS / 120.0)  // ~6.67ms per degree
+```
+
+The sequence execution runs in the main loop, checking if enough time has passed before moving to the next step:
+
+```cpp
+// Handle sequence execution
+if (sequenceRunning && stepCount > 0) {
+  unsigned long now = millis();
+  if (now - lastSequenceTime >= steps[sequenceIndex].delayMs) {
+    sequenceIndex++;
+    if (sequenceIndex >= stepCount) {
+      // Sequence complete
+      sequenceRunning = false;
+      sequenceIndex = 0;
+    } else {
+      // Execute next step
+      myServo.write(steps[sequenceIndex].angle);
+      currentAngle = steps[sequenceIndex].angle;
+      lastSequenceTime = now;
+    }
+  }
+}
+```
+
+[Download servo-test.cpp](/project-assets/final-project/hypercarousel/2-button-pressor-servo/servo-test.cpp)
+
+<Media
+  src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/software-test-work.mp4"
+  caption="Servo test via web interface"
+/>
+
+(You'll notice some weird text in the web interface — the frontend was vibe-coded with emoji, but the ESP32 doesn't render them properly. It still works though!)
