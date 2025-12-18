@@ -409,3 +409,12 @@ With all the thinking and planning done, I'm ready to start hands-on fabrication
 - Validate Hall effect encoder positioning
 - Build first prototype tray
 - Test optical path with actual components
+
+## System Diagram
+
+The diagram below shows the complete system architecture. The RPi Zero serves as the main controller, handling mouse input via PS/2, monitoring slide position through a magnetic rotary encoder, rendering the cursor to the projector via HDMI, and driving the stepper motor through an H-Bridge for slide advancement. The ESP32S3 Sense runs the OCR pipeline using its built-in OV3660 camera and communicates hyperlink data to the RPi Zero over UART. Power flows from 110V AC through a 12V supply, with a 5V regulator for the logic boards.
+
+<Media
+  src="/project-assets/final-project/hypercarousel-roadmap/system-diagram.png"
+  caption="HyperCarousel system architecture."
+/>
