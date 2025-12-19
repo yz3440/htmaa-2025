@@ -127,7 +127,7 @@ Before designing anything, I needed to understand what I was working with. I bou
 
 For the transparency film, I bought [Caydo 8.5 x 11 Inch A4 Transparent Film for Screen Printing](https://www.amazon.com/dp/B0DFY8FWTX) (I got the A3 11×17 inch version, but they no longer sell that variant).
 
-I'm most comfortable designing in Figma, but designing for print isn't a native feature. My workaround (shamefully hacky) is to assign each pixel a real physical unit — in this design I'm using 1px = 1mm. So I have a 2794×4318 canvas and each film block is 360 × 350 (36mm × 35mm). When I export, I use 4× resolution to keep the text sharp, and when I print, I set the paper to 11×17 and scale to cover 100%. Not elegant, but it works.
+I designed in Figma at 1px = 1mm scale, exported at 4× resolution, and printed on 11×17 paper at 100% scale.
 
 The content of these slides is mostly sourced from Wikipedia. Text that's underlined indicates hyperlinks connecting to other slides.
 
@@ -426,9 +426,7 @@ Added the notch for the cable, plus some curves on the edges hoping it would mak
     cameraPosition={[80, -10, 200]}
     objectPosition={[0, -50, 0]}
     backgroundColor="gray"
-
-/>
-
+  />
   <Media
     widthPercentage={100}
     src="/project-assets/final-project/hypercarousel/2-button-pressor-servo/v1-works.jpeg"
@@ -457,9 +455,7 @@ Added hexagonal pockets for the nuts to sit flush. All the dimensions are parame
     cameraPosition={[80, -10, 200]}
     objectPosition={[0, -50, 0]}
     backgroundColor="gray"
-
-/>
-
+  />
 </GridSection>
 
 The previous prints were black PLA. For the final version, I switched to [OVERTURE Rock PLA Marble filament](https://www.amazon.com/dp/B0F4RCJ659) — it has mixed particles that give a white pebble stone texture. Bonus: it hides layer lines really well.
@@ -641,8 +637,7 @@ The 3D printed holder has elongated M3 screw slots instead of fixed holes. This 
     caption="V2 — adjusted slot length"
     cameraPosition={[50, 50, 5]}
     objectPosition={[10, 0, 0]}
-/>
-
+  />
 </GridSection>
 
 [Download V1 STL](/project-assets/final-project/hypercarousel/4-lookup-table-recognition/v1.stl) ·
@@ -688,38 +683,13 @@ I wrote the entire computer vision pipeline from scratch in C++ on the ESP32S3, 
 **Step 3: L-mark detection** — This is the key innovation. Instead of generic quad detection, I designed L-shaped corner markers for each corner of the lookup table. Each L-mark has a specific orientation, and I use convolution kernels to detect them:
 
 ```cpp
-// L-mark detection kernel scoring
-inline float scoreLMark(const GrayImage& img, int cx, int cy, LMarkType type,
-                        int minArm = 8, int maxArm = 50, uint8_t darkThresh = 80) {
-    // Direction vectors based on orientation
-    int hDir, vDir;
-    switch (type) {
-        case LMARK_TL: hDir = 1;  vDir = 1;  break;  // right, down
-        case LMARK_TR: hDir = -1; vDir = 1;  break;  // left, down
-        case LMARK_BL: hDir = 1;  vDir = -1; break;  // right, up
-        case LMARK_BR: hDir = -1; vDir = -1; break;  // left, up
-    }
-
-    // Check corner is dark
-    if (img.get(cx, cy) > darkThresh) return 0;
-
-    // Measure horizontal and vertical arm lengths
-    int hLen = 0, vLen = 0;
-    for (int i = 1; i <= maxArm; i++) {
-        if (img.get(cx + hDir * i, cy) < darkThresh) hLen++;
-        else break;
-    }
-    for (int i = 1; i <= maxArm; i++) {
-        if (img.get(cx, cy + vDir * i) < darkThresh) vLen++;
-        else break;
-    }
-
+// L-mark detection — check corner darkness, measure arm lengths, score by balance
+inline float scoreLMark(const GrayImage& img, int cx, int cy, LMarkType type, ...) {
+    int hDir, vDir;  // direction vectors based on L-mark orientation (TL/TR/BL/BR)
+    // ... measure horizontal and vertical arm lengths from corner point ...
     if (hLen < minArm || vLen < minArm) return 0;
-
-    // Score based on arm lengths and balance
-    float score = (hLen + vLen) / 2.0f;
     float ratio = (float)std::min(hLen, vLen) / std::max(hLen, vLen);
-    return score * (0.5f + 0.5f * ratio);
+    return ((hLen + vLen) / 2.0f) * (0.5f + 0.5f * ratio);  // favor balanced arms
 }
 ```
 
@@ -767,45 +737,7 @@ inline float scoreLMark(const GrayImage& img, int cx, int cy, LMarkType type,
 
 ### Web Debug Interface
 
-I built a web interface served directly from the ESP32S3 to preview the camera feed and test the pipeline in real-time. The interface includes orientation controls (8 rotation/flip combinations) and a keystone correction slider:
-
-```cpp
-// Web debug interface - handles processed image with transforms
-void handleProcessed() {
-  GrayImage gray, step1, step2, corrected;
-
-  if (!captureGray(gray)) {
-    server.send(500, "text/plain", "capture failed");
-    return;
-  }
-
-  // Step 1: 90 degree rotation (camera is mounted sideways)
-  bool ok = (orientMode < 4) ? rotate90CCW(gray, step1) : rotate90CW(gray, step1);
-  gray.release();
-
-  // Step 2: additional transform (180, flipH, flipV, or none)
-  int subMode = orientMode % 4;
-  switch (subMode) {
-    case 0: step2 = std::move(step1); break;
-    case 1: rotate180(step1, step2); step1.release(); break;
-    case 2: flipH(step1, step2); step1.release(); break;
-    case 3: flipV(step1, step2); step1.release(); break;
-  }
-
-  // Apply keystone correction
-  if (keystoneVal != 0.0f) {
-    keystoneH(step2, corrected, keystoneVal);
-    step2.release();
-    output = &corrected;
-  }
-
-  // Send raw grayscale bytes with dimensions in headers
-  server.sendHeader("X-Width", String(output->width));
-  server.sendHeader("X-Height", String(output->height));
-  server.send(200, "application/octet-stream", "");
-  server.client().write(output->data, output->size());
-}
-```
+I built a web interface served directly from the ESP32S3 to preview the camera feed and test the pipeline in real-time. The interface includes orientation controls (8 rotation/flip combinations) and a keystone correction slider — useful for dialing in the camera position without recompiling.
 
 <Media
   widthPercentage={100}
