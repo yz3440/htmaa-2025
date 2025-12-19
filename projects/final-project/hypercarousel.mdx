@@ -317,6 +317,40 @@ Moral: sometimes your fix makes things worse. More on this disaster in the Looku
 
 [Download V3 design SVG](/project-assets/final-project/hypercarousel/0-hyper-slide/v3-1-figma-export.svg)
 
+### V4: Superscript Link Numbers
+
+The previous designs used underlined text to indicate hyperlinks, but there was no clear mapping between the underlined link and the numpad key the user should press. V4 fixes this by adding **superscript numbers** next to each hyperlink — like academic footnotes (¹, ², ³, etc.). Each superscript directly corresponds to a key on the numpad.
+
+This is a UX improvement on the slide content itself, not the mount. The user now sees "Vannevar Bush¹" and knows to press "1" on the numpad to follow that link. No guessing, no counting underlines.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v4-figma-design-1x-export.jpg"
+  caption="V4 design — superscript numbers mark hyperlinks (¹, ², ³...)"
+/>
+
+[Download V4 design (4× resolution)](/project-assets/final-project/hypercarousel/0-hyper-slide/v4-figma-design-4x-export.jpg)
+
+I printed the new slides on transparency film using a Canon PRO-200:
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v4-out-of-printer.jpeg"
+  caption="V4 slides fresh off the Canon PRO-200"
+/>
+
+Here's the full batch of assembled HyperSlides — V4 transparencies mounted on V2 cardstock mounts, with the lookup tables filled in by hand:
+
+<Media
+  widthPercentage={100}
+  src="/project-assets/final-project/hypercarousel/0-hyper-slide/v4-side-by-side.jpeg"
+  caption="Complete HyperSlide set — 11 of 12 slides (one missing in photo) numbered 1, 5, 9, 13..."
+/>
+
+The slide numbers (1, 5, 9, 13, 17, 21, 25, 29, 33, 37, 41, 45) aren't sequential — there's a **3-slot gap** between each slide on the carousel tray. This spacing ensures the camera module has a clear, unobstructed view of the lookup table when a slide is ejected. Without the gap, the adjacent slides would block the camera's line of sight.
+
+The workflow: print transparencies -> laser cut mounts -> glue film to cardstock -> write lookup table by hand. Not elegant, but it works. Each slide's lookup table maps superscript numbers (1–9) to destination slide numbers.
+
 ## Aluminum Frame
 
 I started with 2020 aluminum extrusions because they're cheap, easy to work with, and infinitely reconfigurable. Perfect for a prototype where I didn't know final dimensions yet.
@@ -339,6 +373,14 @@ What started as a "quick test jig" ended up being good enough for the final pres
     caption="Perfect fit — 276×276mm square cradles the Carousel"
   />
 </GridSection>
+
+The extrusions I had were longer than needed, so I trimmed each one to length with a bandsaw:
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/1-aluminum-frame/2-cut-frame.jpg"
+  caption="Frame after trimming all extrusions with a bandsaw"
+/>
 
 ## Button Pressor Servo
 
@@ -860,6 +902,28 @@ I tried the V3 HyperSlide design with seven-segment digit guides scored into the
 
 This part of the project is still very much in progress. For the final demo, I pre-loaded the lookup tables into the main controller's memory and bypassed the camera entirely. Not proud of it, but it let me demonstrate the core navigation concept.
 
+### The Hardcoded Fallback
+
+Since the OCR wasn't reliable enough, I added a hardcoded lookup table directly in the main board firmware. The system has two modes controlled by a bistable switch: **Lookup Table Mode** (default) uses the hardcoded table, while **Camera OCR Mode** queries the camera — but I never got the camera mode working reliably enough to use it in the demo.
+
+Here's the hardcoded table structure:
+
+```cpp
+// Lookup table: lookupTable[slide][numpad-1] = destination slide
+// numpad 1 = index 0, numpad 2 = index 1, etc.
+const uint8_t lookupTable[TOTAL_SLIDES][MAX_LOOKUP_OPTIONS] = {
+    {LOOKUP_INVALID, LOOKUP_INVALID, LOOKUP_INVALID, LOOKUP_INVALID}, // 0: no slide
+    {5, 9, 29, LOOKUP_INVALID},                                       // 1: 5, 9, 29
+    // ... slides 2-4 have no links ...
+    {9, 5, 37, LOOKUP_INVALID},                                       // 5: 9, 5, 37
+    // ... etc for all 81 slides ...
+};
+```
+
+Each slide can have up to 4 destination options (matching numpad keys 1–4). `LOOKUP_INVALID` (0xFF) means that numpad key has no destination for that slide. The firmware looks up `lookupTable[currentSlide][numpadKey - 1]` and advances to that slide number.
+
+It's the opposite of elegant — every time I change the slide content, I have to manually update the C++ array and reflash the ESP32. But it works, and for a demo that's what matters.
+
 ### Design Files
 
 - [ESP32-S3 Camera OCR Source Code (.zip)](/project-assets/final-project/hypercarousel/4-lookup-table-recognition/esp32-s3-cam-ocr.zip) — PlatformIO project with vision pipeline, web debug interface, and Vercel cloud OCR integration
@@ -874,10 +938,33 @@ The Kodak Carousel tray has 80 slots arranged in a circle. As the tray rotates, 
 
 ### Sensor Mounting
 
-I mounted the Hall effect sensor on a small bracket attached to the aluminum frame. The sensor sits about 3-4mm away from the rotating tray mechanism — close enough to detect reliably, far enough to avoid physical contact.
+I 3D printed a holder arm that extends over the carousel tray. The Hall effect sensor PCB mounts at the end, positioned about 3-4mm above the rotating tray mechanism — close enough to detect reliably, far enough to avoid physical contact.
 
-{/* TODO: Add photo of Hall effect sensor mounted */}
-{/* TODO: Add diagram of sensor position */}
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/5-hall-effect/v1-0-encoder-holder-top-view.jpeg"
+    caption="Sensor holder arm — 3D printed with JST connector"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/5-hall-effect/v1-1-hanged-encoder-holder-bottom-view.jpeg"
+    caption="Hall effect sensor PCB at the end of the arm"
+  />
+</GridSection>
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/5-hall-effect/v1-assembled.jpg"
+    caption="Full assembly — sensor arm over the carousel tray"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/5-hall-effect/v0-print-size-test.jpeg"
+    caption="Another angle showing the sensor position"
+  />
+</GridSection>
 
 In isolated testing (just the sensor and the main ESP32S3), it works perfectly. Clean pulses, reliable detection, accurate counting. I was feeling good about this.
 
@@ -891,24 +978,26 @@ But the moment I connect other I2C devices (the PS/2 submodule, the camera board
 
 I've tried:
 
-- **Different pull-up values** — no change
-- **Shorter cables** — marginal improvement
-- **Checking for address conflicts** — all devices have unique addresses
-- **Adding bus recovery logic** — helps sometimes, but not reliably
-- **Separate 3.3V regulator** — didn't help
+| Attempted Fix              | Result                            |
+| -------------------------- | --------------------------------- |
+| Different pull-up values   | No change                         |
+| Shorter cables             | Marginal improvement              |
+| Checking address conflicts | All devices have unique addresses |
+| Adding bus recovery logic  | Helps sometimes, but not reliably |
+| Separate 3.3V regulator    | Didn't help                       |
 
 I don't know exactly why this happens. My best guesses:
 
-- **Capacitance issues** from multiple devices loading the bus
-- **Timing conflicts** between fast and slow I2C devices
-- **Power supply noise** affecting the 3.3V rail specifically
-- **Clock stretching incompatibility** between devices
+| Possible Cause     | Theory                                    |
+| ------------------ | ----------------------------------------- |
+| Capacitance issues | Multiple devices loading the bus          |
+| Timing conflicts   | Fast and slow I2C devices on the same bus |
+| Power supply noise | Affecting the 3.3V rail specifically      |
+| Clock stretching   | Incompatibility between devices           |
 
-For the final demo, I disconnected the Hall effect sensor entirely. The system works fine without position tracking — I just have to mentally keep track of which slide I'm on, which defeats some of the purpose but at least lets me demonstrate the core hyperlink navigation.
+For the final demo, I disconnected the Hall effect sensor entirely. Instead, I rely on **manual reset** — every time HyperCarousel is turned on, the carousel tray has to be manually positioned to slot 0 before the system works properly. The software assumes it starts at position 0 and counts button presses from there.
 
 This is the most frustrating part of the project. I know the sensor works. I know the I2C bus works with other devices. But together? Something breaks. Classic embedded systems debugging: it works in isolation, fails in integration.
-
-{/* TODO: Add screenshot of I2C error if available */}
 
 ## Reflection
 
@@ -953,6 +1042,7 @@ V1 will need a better camera, a rethought I2C architecture, and probably a lot m
   - [V0 Design (4× resolution JPG)](/project-assets/final-project/hypercarousel/0-hyper-slide/v0-99-figma-design-4x-export.jpg)
   - [V2 Design (SVG)](/project-assets/final-project/hypercarousel/0-hyper-slide/v2-0-figma-export.svg)
   - [V3 Design (SVG)](/project-assets/final-project/hypercarousel/0-hyper-slide/v3-1-figma-export.svg)
+  - [V4 Design (4× resolution JPG)](/project-assets/final-project/hypercarousel/0-hyper-slide/v4-figma-design-4x-export.jpg)
 - **Servo Holder**
   - [V2 STL](/project-assets/final-project/hypercarousel/2-button-pressor-servo/v2.stl)
   - [Fusion 360 Source](/project-assets/final-project/hypercarousel/2-button-pressor-servo/button-pressor-servo-holder.f3d)
