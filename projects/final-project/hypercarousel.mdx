@@ -455,6 +455,226 @@ if (sequenceRunning && stepCount > 0) {
   caption="Servo test via web interface"
 />
 
-(You'll notice some weird text in the web interface — the frontend was vibe-coded with emoji, but the ESP32 doesn't render them properly. It still works though!)
+You'll notice some weird text in the web interface — the frontend was vibe-coded with emoji, but the ESP32 doesn't render them properly. It still works though!
 
-### Circuit Design
+## Circuit Design
+
+Back to the system diagram — everything connects through an I2C bus using JST-XH 4-pin connectors. This design extends what I built in [Week 12](/projects/week-12-ps2-numpad-via-i2c-bridge/), but with a few critical additions.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/system-diagram-new.png"
+  caption="System architecture — I2C bus connecting all modules"
+/>
+
+### The 5V vs 3.3V Problem
+
+Most of my peripherals — the PS/2 numpad submodule and the ESP32S3 camera — run happily on 5V I2C. But the Hall effect rotary encoder I'm using requires 3.3V. I couldn't just daisy-chain everything on a single bus voltage.
+
+The solution: two separate I2C buses with different power rails. Same SDA/SCL lines from the ESP32S3, but different JST connectors with different VCC voltages.
+
+| Connector Type | VCC  | Pull-up | Connected Devices              |
+| -------------- | ---- | ------- | ------------------------------ |
+| 5V I2C (×4)    | 5V   | 4.99kΩ  | PS/2 submodule, Camera ESP32S3 |
+| 3.3V I2C (×1)  | 3.3V | 4.99kΩ  | Hall effect sensor             |
+
+I don't actually need four 5V I2C connectors — I only have two devices on that bus. But my [Week 12](/projects/week-12-ps2-numpad-via-i2c-bridge/) main board design already had four, and more connectors means more flexibility for future expansion. No reason to remove them.
+
+### Main Board Design
+
+The main board is built around a XIAO ESP32S3 and includes:
+
+- **4× 5V 4-pin JST-XH I2C connectors** — standard I2C with 5V power for most peripherals
+- **1× 3.3V 4-pin JST-XH I2C connector** — dedicated bus for the Hall effect sensor
+- **1× 3-pin servo connector** — PWM signal on a GPIO pin, plus 5V and GND
+- **1× bistable switch** — connected to a digital GPIO and ground, for mode selection
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/3-circuit-design/mainboard-schematic.png"
+    caption="Main board schematic — note the separate 5V and 3.3V I2C connectors"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/3-circuit-design/mainboard-pcb.png"
+    caption="Main board PCB layout"
+  />
+</GridSection>
+
+{/* TODO: Add assembled board photo */}
+
+The pull-up resistors are 4.99kΩ on both buses, which is a reasonable middle ground for the cable lengths I'm dealing with (under 30cm for most connections).
+
+### PS/2 Daughter Board
+
+The PS/2 numpad submodule is exactly what I built in [Week 12](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/week-12-ps2-numpad-via-i2c-bridge/). I didn't change the code at all — it just works. The submodule has its own ESP32-C3 that reads PS/2 keystrokes and exposes them over I2C at address `0x08`. The main board polls it periodically to check for new keypresses.
+
+### Camera Module
+
+For the camera, I'm using an ESP32S3 Sense — the variant that comes with a detachable OV2640 camera module. This board also sits on the I2C bus for communication with the main controller, though the actual image processing happens on-board. I designed a simple breakout board for it:
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/3-circuit-design/esp32s3-cam-schematic.png"
+    caption="ESP32S3 camera breakout schematic"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/3-circuit-design/esp32s3-cam-pcb.png"
+    caption="ESP32S3 camera breakout PCB"
+  />
+</GridSection>
+
+More on the camera software in the Lookup Table Recognition section.
+
+## Lookup Table Recognition
+
+The whole point of the HyperSlide design is that each slide mount has a handwritten lookup table mapping hyperlink numbers to destination slide numbers. The camera's job is to read this table when a slide is ejected.
+
+### Camera Mounting
+
+I added a new vertical aluminum extrusion bar to the frame specifically for the camera. The bar sits perpendicular to the projector's slide ejection slot, giving the camera a top-down view of the slide mount.
+
+{/* TODO: Add photo of camera on aluminum extrusion */}
+
+### Camera Holder Design
+
+The 3D printed holder has elongated M3 screw slots instead of fixed holes. This lets me slide the camera up and down to find the optimal height and viewing angle before tightening the screws. Small adjustment range, but it makes a huge difference when trying to get consistent framing.
+
+{/* TODO: Add GLBViewer for camera holder */}
+{/* TODO: Add photo of camera holder */}
+
+### The CV Pipeline (In Theory)
+
+The recognition pipeline should work like this:
+
+1. **Capture frame** from ESP32S3 camera when slide ejection is detected
+2. **Quad detection** to find the four corners of the lookup table area
+3. **Perspective correction** (homography) to get a flat, rectangular view
+4. **Digit segmentation** to isolate each number in the table
+5. **Digit recognition** (MNIST-style classification) to read the values
+
+I built a web interface to preview the ESP32S3 camera feed and visualize each processing step. The ESP32S3 serves a simple webpage that shows the raw camera image and overlays the detected features.
+
+```cpp
+// ESP32S3 camera web server - serves MJPEG stream and processing preview
+#include "esp_camera.h"
+#include <WiFi.h>
+#include <WebServer.h>
+
+WebServer server(80);
+
+void handleStream() {
+  WiFiClient client = server.client();
+  camera_fb_t *fb = esp_camera_fb_get();
+  if (!fb) {
+    Serial.println("Camera capture failed");
+    return;
+  }
+
+  // Send MJPEG frame
+  client.println("HTTP/1.1 200 OK");
+  client.println("Content-Type: multipart/x-mixed-replace; boundary=frame");
+  client.println();
+
+  while (client.connected()) {
+    fb = esp_camera_fb_get();
+    if (fb) {
+      client.printf("--frame\r\nContent-Type: image/jpeg\r\nContent-Length: %d\r\n\r\n", fb->len);
+      client.write(fb->buf, fb->len);
+      client.println();
+      esp_camera_fb_return(fb);
+    }
+    delay(30);
+  }
+}
+
+void setup() {
+  // Camera init, WiFi connect, etc.
+  server.on("/stream", handleStream);
+  server.begin();
+}
+```
+
+{/* TODO: Add screenshot of web interface */}
+
+### The Reality
+
+Here's where it gets frustrating. The Carousel ejects slides at slightly different angles every time — sometimes tilted left, sometimes right, sometimes perfectly straight. This inconsistency throws off my quad detection, which in turn ruins the perspective correction.
+
+I tried using the V3 HyperSlide design with seven-segment digit guides scored into the cardstock. The idea was to help users write consistent, recognizable digits. But the laser scoring created too much contrast — the dark score lines confused my CV algorithm more than the handwritten digits themselves.
+
+### Google Vision API Attempt
+
+In desperation, I deployed a simple web service on Vercel that proxies images to Google Cloud Vision API for OCR:
+
+```typescript
+// Vercel serverless function for Google Vision OCR
+import { ImageAnnotatorClient } from "@google-cloud/vision";
+
+export default async function handler(req, res) {
+  const client = new ImageAnnotatorClient();
+  const imageBuffer = Buffer.from(req.body.image, "base64");
+
+  const [result] = await client.textDetection({
+    image: { content: imageBuffer },
+  });
+
+  const detections = result.textAnnotations;
+  res.json({ text: detections?.[0]?.description || "" });
+}
+```
+
+Results: still terrible. Google Vision is optimized for printed text and clean documents, not handwritten digits on textured cardstock photographed through a fisheye ESP32 camera lens.
+
+### What I Think I Need
+
+Better markers. The current design relies on finding the lookup table boundaries visually, but there's nothing for the camera to reliably lock onto. I think I need:
+
+1. **High-contrast ArUco markers** or similar fiducials in fixed positions on the slide mount
+2. **Better lighting** — the projector lamp creates harsh shadows that vary with slide position
+3. **Higher resolution camera** — the OV2640 maxes out at 2MP, which might not be enough for small handwritten digits
+
+This part of the project is still very much in progress.
+
+## Rotary Encoder
+
+To track which slide is currently in position, I'm using a Hall effect sensor to detect the carousel tray rotation.
+
+### Why Hall Effect
+
+The Kodak Carousel tray has 80 slots arranged in a circle. As the tray rotates, I need to count how many slots have passed to know which slide is currently at the projection position. A Hall effect sensor can detect the metal parts of the tray mechanism as they pass by.
+
+### Sensor Design
+
+I mounted the Hall effect sensor on a small bracket attached to the aluminum frame. The sensor sits about 3-4mm away from the rotating tray mechanism — close enough to detect reliably, far enough to avoid physical contact.
+
+{/* TODO: Add photo of Hall effect sensor mounted */}
+{/* TODO: Add diagram of sensor position */}
+
+The tolerance is a few millimeters, which should be fine given the carousel's mechanical consistency. In isolated testing, the sensor reliably detects each slot transition.
+
+### The I2C Problem
+
+Here's where things went wrong. The Hall effect sensor I'm using has an I2C interface (hence the dedicated 3.3V I2C connector on the main board). When I test it alone — just the sensor connected to the ESP32S3 — it works perfectly. Clean signals, reliable readings, no issues.
+
+But the moment I connect other I2C devices (the PS/2 submodule, the camera board), the bus starts throwing errors. The main board gets stuck waiting for I2C responses, the sensor readings become garbage, and sometimes the whole bus locks up.
+
+I've tried:
+
+- **Different pull-up values** — no change
+- **Shorter cables** — marginal improvement
+- **Checking for address conflicts** — all devices have unique addresses
+- **Adding bus recovery logic** — helps sometimes, but not reliably
+
+I don't know exactly why this happens. My best guesses:
+
+- **Capacitance issues** from multiple devices loading the bus
+- **Timing conflicts** between fast and slow I2C devices
+- **Power supply noise** affecting the 3.3V rail specifically
+
+For now, the Hall effect sensor is disconnected while I debug. The system works fine without position tracking — I just have to manually keep track of which slide I'm on, which defeats some of the purpose but at least lets me demo the core hyperlink functionality.
+
+{/* TODO: Add screenshot of I2C error if available */}
