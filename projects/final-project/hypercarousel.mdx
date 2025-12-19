@@ -44,9 +44,63 @@ tableOfContents: true
 
 HyperCarousel is a addon for the Kodak Carousel projectors and a novel slide mount design to add hypertext non-linear navigation capabilities to the slide projector.
 
-## Roadmap
+## Origins
 
-As I mentioned in the [roadmap](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/week-9-hypercarousel-roadmap/), I'm planning to build a working but still MVP version of HyperCarousel.
+This project traces back to [Week 1](/projects/week-1-final-project-ideation/) and a DIY projector I built in Shanghai in 2021. The question: what if someone actually built Vannevar Bush's Memex using 1945 technology?
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/week-1/life-magazine-memex-screenshot.webp"
+    caption="Bush's Memex concept (1945)"
+    copyright="Life Magazine"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/week-1/film-projection-202104-1.jpeg"
+    caption="My Shanghai prototype (2021)"
+  />
+</GridSection>
+
+Week 1 me was idealistic: _"If I can do it purely mechanical, I wouldn't go electrical. If I have to go electrical, I wouldn't go electronic."_ Famous last words.
+
+## System Architecture
+
+Here's what I proposed in [Week 9](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/week-9-hypercarousel-roadmap/):
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/system-diagram-old.png"
+  caption="Week 9 plan: RPi Zero, mouse cursor projection, stepper motor, the works"
+/>
+
+And here's what I actually built:
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/system-diagram-new.png"
+  caption="Week 15 reality: ESP32s, numpad, servo pressing buttons"
+/>
+
+### What Changed
+
+| Aspect     | Plan                        | Reality                |
+| ---------- | --------------------------- | ---------------------- |
+| Controller | RPi Zero                    | ESP32S3                |
+| Input      | PS/2 Mouse                  | PS/2 Numpad            |
+| Cursor     | HDMI Projector overlay      | None                   |
+| Motor      | Stepper + H-Bridge + Geneva | Servo pressing buttons |
+| Power      | 12V + regulator             | 5V USB-C               |
+
+**The cursor died first.** Turns out projectors can't focus on two slides at once — my overlay idea failed in 30 seconds of testing. No cursor means no mouse, no HDMI, no RPi Zero.
+
+**The Geneva mechanism died next.** Instead of custom mechanics, I'm just pressing the Carousel's existing buttons with a servo arm. Dumb, but it works.
+
+### So Much for Low-Tech
+
+The _creator workflow_ stayed analog — printed transparencies, laser-cut cardstock, handwritten lookup tables. But the system itself? Multiple ESP32s, I2C, OCR. Firmly electronic.
+
+The honest take: HyperCarousel is a digital device that enables an analog workflow. Not what I romanticized in Week 1, but it's the compromise that ships.
 
 ## HyperSlide Design
 
@@ -402,3 +456,5 @@ if (sequenceRunning && stepCount > 0) {
 />
 
 (You'll notice some weird text in the web interface — the frontend was vibe-coded with emoji, but the ESP32 doesn't render them properly. It still works though!)
+
+### Circuit Design
