@@ -42,11 +42,11 @@ tableOfContents: true
 
 <EmbeddedVideo src="https://vimeo.com/1147543474?share=copy&fl=sv&fe=ci" />
 
-HyperCarousel is an add-on for the Kodak Carousel projectors and a novel slide mount design (HyperSlide) to add hypertext non-linear navigation capabilities to the slide projector.
+HyperCarousel is an add-on for the Kodak Carousel projectors and a novel slide mount design (HyperSlide) to add hypertext non-linear navigation capabilities to the slide projector. It's also a case study in how idealistic design goals crash into reality.
 
 ## Origins
 
-This project traces back to [Week 1](/projects/week-1-final-project-ideation/) and a DIY projector I built in Shanghai in 2021. The question: what if someone actually built Vannevar Bush's Memex using 1945 technology?
+This project traces back to [Week 1](/projects/week-1-final-project-ideation/) and a DIY projector I built in Shanghai in 2021. I asked myself a question that seemed simple at the time: what if someone actually built Vannevar Bush's Memex using 1945 technology?
 
 <GridSection columnCount={2}>
   <Media
@@ -92,23 +92,25 @@ And here's what I actually built:
 | Motor      | Stepper + H-Bridge + Geneva | Servo pressing buttons |
 | Power      | 12V + regulator             | 5V USB-C               |
 
-**The cursor died first.** Turns out projectors can't focus on two slides at once — my overlay idea failed in 30 seconds of testing. No cursor means no mouse, no HDMI, no RPi Zero.
+**The cursor died first.** I spent weeks thinking about how to overlay a mouse cursor onto the projected image. Turns out projectors can't focus on two slides at once — my overlay idea failed in 30 seconds of actual testing. Should've tried that earlier. No cursor means no mouse, no HDMI, no RPi Zero. The entire top half of my roadmap, gone.
 
-**The Geneva mechanism died next.** Instead of custom mechanics, I'm just pressing the Carousel's existing buttons with a servo arm. Dumb, but it works.
+**The Geneva mechanism died next.** I had romantic visions of a precision-machined Geneva drive controlling the carousel advance. Instead, I'm just... pressing the Carousel's existing buttons with a servo arm. It's the dumbest possible solution. It also works.
 
 ### So Much for Low-Tech
 
-The _creator workflow_ stayed analog — printed transparencies, laser-cut cardstock, handwritten lookup tables. But the system itself? Multiple ESP32s, I2C, OCR. Firmly electronic.
+The _creator workflow_ stayed analog — printed transparencies, laser-cut cardstock, handwritten lookup tables. But the system itself? Multiple ESP32s, I2C buses, computer vision. Firmly electronic. Week 1 me would be disappointed.
 
-The honest take: HyperCarousel is a digital device that enables an analog workflow. Not what I romanticized in Week 1, but it's the compromise that ships.
+The honest take: HyperCarousel is a digital device that enables an analog workflow. Not the "purely mechanical" dream I romanticized in Week 1, but it's the compromise that actually ships. Sometimes you have to kill your darlings to finish the project.
 
 ## HyperSlide Design
 
-HyperSlide is a custom slide mount design that enables hypertext navigation in the Kodak Carousel. Each slide mount contains a lookup table that maps hyperlink numbers to destination slide numbers — essentially metadata attached to each slide.
+HyperSlide is a custom slide mount design that enables hypertext navigation in the Kodak Carousel. Each slide mount contains a handwritten lookup table that maps hyperlink numbers to destination slide numbers — essentially metadata attached to each slide. Think of it as a punchcard, but human-readable.
+
+This section chronicles four design iterations. Spoiler: the fourth one still doesn't fully work.
 
 ### V0: Testing the Waters
 
-I started by buying [Matin 35mm Slide Mounts 100 Pieces - Glassless White](https://www.amazon.com/dp/B008QT9AV2) to understand the physical constraints of slide mounts. I checked some references on slide film dimensions. According to ["How to Tell Which Type of Slides You Have"](https://kodakdigitizing.com/blogs/news/how-to-tell-which-type-of-slides-you-have) by Dillon Wallace, the 35mm film imaging size is 36mm × 24mm, but the entire film for one shot including the sprocket holes is 36mm × 35mm.
+Before designing anything, I needed to understand what I was working with. I bought [Matin 35mm Slide Mounts 100 Pieces - Glassless White](https://www.amazon.com/dp/B008QT9AV2) to understand the physical constraints of slide mounts. I checked some references on slide film dimensions. According to ["How to Tell Which Type of Slides You Have"](https://kodakdigitizing.com/blogs/news/how-to-tell-which-type-of-slides-you-have) by Dillon Wallace, the 35mm film imaging size is 36mm × 24mm, but the entire film for one shot including the sprocket holes is 36mm × 35mm.
 
 <GridSection columnCount={2}>
   <Media
@@ -125,7 +127,7 @@ I started by buying [Matin 35mm Slide Mounts 100 Pieces - Glassless White](https
 
 For the transparency film, I bought [Caydo 8.5 x 11 Inch A4 Transparent Film for Screen Printing](https://www.amazon.com/dp/B0DFY8FWTX) (I got the A3 11×17 inch version, but they no longer sell that variant).
 
-I'm most comfortable designing in Figma, but designing for print isn't a native feature. My workaround is to assign each pixel a real physical unit — in this design I'm using 1px as 1mm. So I have a 2794×4318 canvas and each film block is 360 × 350 (36mm × 35mm). When I export, I use 4× resolution to keep the text sharp, and when I print, I set the paper to 11×17 and scale to cover 100%.
+I'm most comfortable designing in Figma, but designing for print isn't a native feature. My workaround (shamefully hacky) is to assign each pixel a real physical unit — in this design I'm using 1px = 1mm. So I have a 2794×4318 canvas and each film block is 360 × 350 (36mm × 35mm). When I export, I use 4× resolution to keep the text sharp, and when I print, I set the paper to 11×17 and scale to cover 100%. Not elegant, but it works.
 
 The content of these slides is mostly sourced from Wikipedia. Text that's underlined indicates hyperlinks connecting to other slides.
 
@@ -165,7 +167,11 @@ Here's a slide about Center for Bits and Atoms mounted in a Matin mount, and a s
 
 [Download V0 design (4× resolution)](/project-assets/final-project/hypercarousel/0-hyper-slide/v0-99-figma-design-4x-export.jpg)
 
-In the original roadmap, I wanted to use a mouse/trackball interaction to control a cursor on the projector. So I did some testing — I drew a cursor on an empty piece of slide and put both the Neil slide and cursor slide into the projector. Turns out (obviously) the projector couldn't focus on both slides at the same time on the projection plane. This led to my following design that gives up on the cursor idea and settles on the numpad & lookup table compromise.
+Here's where my cursor idea died. In the original roadmap, I wanted to use a mouse/trackball interaction to control a cursor overlaid on the projected image. So I did some testing — I drew a cursor on an empty piece of slide and put both the Neil slide and cursor slide into the projector at the same time.
+
+Turns out (obviously, in hindsight) the projector can only focus on one focal plane. When the content slide is sharp, the cursor is blurry. When the cursor is sharp, the content is blurry. There's no winning here without serious optical engineering I'm not equipped to do.
+
+This 30-second test killed weeks of planning. RIP cursor idea. The numpad & lookup table approach was the fallback that became the main design.
 
 <Media
   src="/project-assets/final-project/hypercarousel/0-hyper-slide/v0-6-slide-cursor-dual-slide-test.mp4"
@@ -174,7 +180,7 @@ In the original roadmap, I wanted to use a mouse/trackball interaction to contro
 
 ### V1: The Punchcard Inspiration
 
-I was originally thinking I'd want to use a punchcard. This is because I want everything as analog as possible, and the IBM Punchcard was a well-established standard. I even found a variation with a slide embedded in a punchcard (taking up 1/3 of punch space, using the same size as IBM punchcard). These are called aperture cards, used for archiving image documents like blueprints efficiently with the help of sorting and indexing provided by the punch. Basically metadata-attached microfilms — something similar to what I want to achieve here.
+I was originally dead set on using punchcards. The IBM Punchcard was a well-established standard, and I wanted everything as analog as possible. I even found a variation with a slide embedded in a punchcard — these are called aperture cards, used for archiving blueprints with machine-readable metadata. Basically exactly what I want to achieve here, except it already existed in the 1960s.
 
 <GridSection columnCount={2}>
   <Media
@@ -189,7 +195,9 @@ I was originally thinking I'd want to use a punchcard. This is because I want ev
   />
 </GridSection>
 
-But then I'd need to use optical sensors to read it. I wasn't ready to die on this hill. I compromised by allowing myself to use a camera system via ESP32, so I designed a human-readable table with some marks for camera registration. A person can just write the lookup table (which link goes to which slide, or a hyperlink index → slide number mapping) on the slide mount.
+But then I'd need optical sensors to read the punches, plus a whole mechanical punch system for the user to create them. I wasn't ready to die on this hill — that's a semester-long project in itself.
+
+So I compromised: instead of machine-punched holes, I'd use a camera to read human-readable handwritten numbers. A person can just write the lookup table on the slide mount with a pen. Less elegant than punchcards, but infinitely more practical for a prototype.
 
 So this is my design: 5 mounts laid out on a letter-sized canvas. I made the width the same as the slide mount requirement (2 inch / 51.3mm) and doubled the height to 4 inch (102.6mm). I located the 36×24mm film cutout at the right location and put a two-column table on top (one says `link #`, the other says `to #`).
 
@@ -201,9 +209,7 @@ So this is my design: 5 mounts laid out on a letter-sized canvas. I made the wid
 
 I used [White Cardstock 8.5 x 11, 230gsm Cover Cardstock Paper, 85 Lb Heavy Card](https://www.amazon.com/dp/B0CJX2153R) for the material.
 
-I put my design in the xTool P2 laser cutter. I wanted to engrave the table and cut the mount contour and film slot. I realized the text part is recognized as engrave, and all the rest are score. I needed to manually assign the text to engrave, the table frame lines to score, and the outer lines to cut.
-
-Also, my SVG did not preserve dimensions well. I had to manually rescale the shapes so that the width of each one is 50mm.
+I put my design in the xTool P2 laser cutter. I wanted to engrave the table headers, score the grid lines, and cut the mount contour. The xTool software interpreted everything wrong — I had to manually reassign each element type. Also, my SVG export didn't preserve dimensions (classic Figma-to-laser issue), so I had to manually rescale everything. The width should be 50mm to match the Matin mounts.
 
 <Media
   widthPercentage={66}
@@ -245,7 +251,11 @@ I taped my film and the slide mount together:
   />
 </GridSection>
 
-I tested the film in my projector... and it got stuck halfway. I think it might be too wide? I used my caliper to measure the Matin slide mount, and it reads 50.15mm — same as what I had. But paper flexes more than plastic. So I decided to trim my cardstock on both sides with scissors and test again. It worked! The slide goes up and down in the projector smoothly.
+Moment of truth: I tested the slide in my projector... and it got stuck halfway.
+
+My first instinct: it's too wide. I measured the Matin slide mount with a caliper — 50.15mm. Same as what I designed. But paper isn't plastic. Paper bends and catches on things. Rather than waste more cardstock on another laser session, I just trimmed both sides with scissors.
+
+It worked. The slide goes up and down smoothly now. Sometimes the fastest fix is the least elegant one.
 
 <GridSection columnCount={2}>
   <Media
@@ -264,7 +274,9 @@ I tested the film in my projector... and it got stuck halfway. I think it might 
 
 ### V2: Getting the Width Right
 
-I changed the width from 50mm to 48mm and everything works now. I used the same laser settings and made ten of them on two pieces of letter-sized cardstock. And I used glue stick this time to mount the film — a lot cleaner!
+Lesson learned: I changed the width from 50mm to 48mm. Two millimeters of tolerance for paper flex. Everything works now without trimming.
+
+I batch-cut ten mounts on two pieces of letter-sized cardstock. I also switched from tape to glue stick for mounting the film — much cleaner, and the bond is more permanent.
 
 <GridSection columnCount={2}>
   <Media
@@ -291,7 +303,7 @@ Here's a 10× speed timelapse of the cutting process:
 
 ### V3: Seven-Segment Marking Attempt
 
-Later in the project I was having trouble with digit recognition, so I decided to change the design to include some marking to help users write seven-segment digits at designated locations.
+Later in the project, my computer vision was struggling to recognize handwritten digits. So I had what I thought was a clever idea: score seven-segment digit guides into the cardstock. Users would trace over the guides, resulting in consistent, recognizable digits.
 
 <Media
   widthPercentage={66}
@@ -299,15 +311,21 @@ Later in the project I was having trouble with digit recognition, so I decided t
   caption="V3 design with seven-segment digit guides scored on the mount"
 />
 
-I did not end up using these because the scoring marks are too dark even at 200mm/s and 1% power setting, which creates high contrast and messes with my CV algorithm even more. I'll talk about this in detail in the lookup-table recognition section below.
+It backfired. Even at minimum power (200mm/s, 1%), the scoring marks are too dark. The high-contrast burn lines confuse my CV algorithm even more than messy handwriting. The "helpful" guides became noise in the image. I abandoned this approach.
+
+Moral: sometimes your fix makes things worse. More on this disaster in the Lookup Table Recognition section.
 
 [Download V3 design SVG](/project-assets/final-project/hypercarousel/0-hyper-slide/v3-1-figma-export.svg)
 
 ## Aluminum Frame
 
-I started out wanting to prototype with 2020 aluminum extrusions — they're easy to work with and let you iterate on mounting configurations quickly. I arranged four pieces in a square: the front and back rails sit at the bottom, while the left and right rails are raised higher. This creates a cradle that locks the projector in place from all sides.
+I started with 2020 aluminum extrusions because they're cheap, easy to work with, and infinitely reconfigurable. Perfect for a prototype where I didn't know final dimensions yet.
 
-Turns out the Kodak Carousel 600 fits _perfectly_ in a 276×276mm square. Like, suspiciously perfectly. You can even lift the whole assembly up by the frame without worrying about the projector falling out — the fit is that snug. What started as a quick test jig ended up being good enough for the final presentation, so I just kept it.
+I arranged four pieces in a square: the front and back rails sit at the bottom, while the left and right rails are raised higher. This creates a cradle that locks the projector in place from all sides.
+
+Here's the lucky part: the Kodak Carousel 600 fits _perfectly_ in a 276×276mm square. Like, suspiciously perfectly. No shimming, no adjustment. You can lift the whole assembly by the frame without the projector falling out — the fit is that snug.
+
+What started as a "quick test jig" ended up being good enough for the final presentation. I never upgraded to anything fancier. Why fix what isn't broken?
 
 <GridSection columnCount={2}>
   <Media
@@ -324,13 +342,15 @@ Turns out the Kodak Carousel 600 fits _perfectly_ in a 276×276mm square. Like, 
 
 ## Button Pressor Servo
 
-The Kodak Carousel has physical buttons for advancing slides forward and backward. Rather than hacking into the electronics, I decided to just... press the buttons with a servo. Sometimes the dumbest solution is the best solution.
+Remember the Geneva mechanism from my Week 9 roadmap? The precision-machined drive that would elegantly advance the carousel? Yeah, I gave up on that.
 
-The servo I'm using is an [ANNIMOS 20KG Digital Servo](https://www.amazon.com/ANNIMOS-Digital-Waterproof-DS3218MG-Control/dp/B076CNKQX4) — high torque, full metal gear, waterproof (overkill for button pressing, but I had it lying around). It should be more than enough to press the button.
+The Kodak Carousel already has physical buttons for advancing slides forward and backward. Rather than reverse-engineering the electronics or building custom mechanics, I decided to just... press the buttons with a servo. A robot finger. It's ridiculous. It's also exactly what I needed.
+
+The servo I'm using is an [ANNIMOS 20KG Digital Servo](https://www.amazon.com/ANNIMOS-Digital-Waterproof-DS3218MG-Control/dp/B076CNKQX4) — high torque, full metal gear, waterproof. Wildly overkill for pressing a button that requires maybe 200g of force, but I had it lying around from a previous project.
 
 ### V0: Initial Design
 
-I planned to mount the servo on the aluminum extrusion near the film advancement button. First step: measure the servo. The body (not including the mounting wings) is 39.67mm × 19.88mm. The mounting screws are M3, so I'm using 3.4mm holes.
+First step: measure the servo. The body (not including the mounting wings) is 39.67mm × 19.88mm. The mounting screws are M3, so I'm using 3.4mm holes for clearance.
 
 <Media
   widthPercentage={66}
@@ -350,7 +370,7 @@ I modeled everything parametrically in Fusion 360 using 40 × 20mm as the nomina
 
 [Download V0 STL](/project-assets/final-project/hypercarousel/2-button-pressor-servo/v0.stl)
 
-I forgot to add a notch for the cable coming out from the motor. Back to Fusion 360...
+Printed it, tried to install it, and immediately realized I forgot to add a notch for the cable coming out from the motor. Classic. Back to Fusion 360...
 
 ### V1: Cable Notch
 
@@ -455,11 +475,11 @@ if (sequenceRunning && stepCount > 0) {
   caption="Servo test via web interface"
 />
 
-You'll notice some weird text in the web interface — the frontend was vibe-coded with emoji, but the ESP32 doesn't render them properly. It still works though!
+You'll notice some weird text in the web interface — I vibe-coded the frontend with emoji labels, but the ESP32's web server doesn't handle UTF-8 emoji correctly. The interface looks broken but functions fine. Good enough for testing.
 
 ## Circuit Design
 
-Back to the system diagram — everything connects through an I2C bus using JST-XH 4-pin connectors. This design extends what I built in [Week 12](/projects/week-12-ps2-numpad-via-i2c-bridge/), but with a few critical additions.
+The system architecture connects everything through an I2C bus using JST-XH 4-pin connectors. This design extends what I built in [Week 12](/projects/week-12-ps2-numpad-via-i2c-bridge/), but with a few critical additions — and a few critical headaches I didn't anticipate.
 
 <Media
   widthPercentage={66}
@@ -467,11 +487,17 @@ Back to the system diagram — everything connects through an I2C bus using JST-
   caption="System architecture — I2C bus connecting all modules"
 />
 
+### PS/2 Daughter Board
+
+The PS/2 numpad submodule is exactly what I built in [Week 12](/projects/week-12-ps2-numpad-via-i2c-bridge/). I didn't change a single line of code — it just worked. This is the only part of the project where something I built earlier dropped in without modification. Small victories.
+
+The submodule has its own ESP32-C3 that reads PS/2 keystrokes and exposes them over I2C at address `0x08`. The main board polls it periodically to check for new keypresses.
+
 ### The 5V vs 3.3V Problem
 
-Most of my peripherals — the PS/2 numpad submodule and the ESP32S3 camera — run happily on 5V I2C. But the Hall effect rotary encoder I'm using requires 3.3V. I couldn't just daisy-chain everything on a single bus voltage.
+I ran into a voltage conflict I should have anticipated earlier. Most of my peripherals — the PS/2 numpad submodule and the ESP32S3 camera — run happily on 5V I2C. But the Hall effect rotary encoder requires 3.3V. Mixing voltages on I2C is asking for trouble.
 
-The solution: two separate I2C buses with different power rails. Same SDA/SCL lines from the ESP32S3, but different JST connectors with different VCC voltages.
+The solution: two separate I2C connector types with different power rails. Same SDA/SCL lines from the ESP32S3, but different JST connectors supplying different VCC voltages.
 
 | Connector Type | VCC  | Pull-up | Connected Devices              |
 | -------------- | ---- | ------- | ------------------------------ |
@@ -502,13 +528,22 @@ The main board is built around a XIAO ESP32S3 and includes:
   />
 </GridSection>
 
-{/* TODO: Add assembled board photo */}
-
 The pull-up resistors are 4.99kΩ on both buses, which is a reasonable middle ground for the cable lengths I'm dealing with (under 30cm for most connections).
 
-### PS/2 Daughter Board
+Here's the assembled PS/2 board and main board together.
 
-The PS/2 numpad submodule is exactly what I built in [Week 12](https://fab.cba.mit.edu/classes/863.25/people/YufengZhao/projects/week-12-ps2-numpad-via-i2c-bridge/). I didn't change the code at all — it just works. The submodule has its own ESP32-C3 that reads PS/2 keystrokes and exposes them over I2C at address `0x08`. The main board polls it periodically to check for new keypresses.
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/3-circuit-design/ps2-board-main-board-front.jpeg"
+    caption="PS/2 board and main board front"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/3-circuit-design/ps2-board-main-board-back.jpeg"
+    caption="PS/2 board and main board back"
+  />
+</GridSection>
 
 ### Camera Module
 
@@ -527,140 +562,332 @@ For the camera, I'm using an ESP32S3 Sense — the variant that comes with a det
   />
 </GridSection>
 
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/3-circuit-design/esp32s3-cam-soldered.jpeg"
+    caption="Front — OV2640 module and FPC connector"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/3-circuit-design/esp32s3-cam-soldered-back.jpeg"
+    caption="Back — JST connector for I2C"
+  />
+</GridSection>
+
 More on the camera software in the Lookup Table Recognition section.
 
 ## Lookup Table Recognition
 
-The whole point of the HyperSlide design is that each slide mount has a handwritten lookup table mapping hyperlink numbers to destination slide numbers. The camera's job is to read this table when a slide is ejected.
+This is where the project gets ambitious — and where I'm still struggling.
 
-### Camera Mounting
-
-I added a new vertical aluminum extrusion bar to the frame specifically for the camera. The bar sits perpendicular to the projector's slide ejection slot, giving the camera a top-down view of the slide mount.
-
-{/* TODO: Add photo of camera on aluminum extrusion */}
+The whole point of the HyperSlide design is that each slide mount has a handwritten lookup table mapping hyperlink numbers to destination slide numbers. The camera's job is to read this table when a slide is ejected. Simple in theory. Turns out handwriting recognition on a microcontroller with a cheap camera is... not simple.
 
 ### Camera Holder Design
 
 The 3D printed holder has elongated M3 screw slots instead of fixed holes. This lets me slide the camera up and down to find the optimal height and viewing angle before tightening the screws. Small adjustment range, but it makes a huge difference when trying to get consistent framing.
 
-{/* TODO: Add GLBViewer for camera holder */}
-{/* TODO: Add photo of camera holder */}
+<GridSection columnCount={2}>
+  <GLBViewer
+    src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/v1.glb"
+    caption="V1 — initial design"
+    cameraPosition={[50, 50, 5]}
+    objectPosition={[10, 0, 0]}
+  />
+  <GLBViewer
+    src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/v2.glb"
+    caption="V2 — adjusted slot length"
+    cameraPosition={[50, 50, 5]}
+    objectPosition={[10, 0, 0]}
+/>
 
-### The CV Pipeline (In Theory)
+</GridSection>
 
-The recognition pipeline should work like this:
+[Download V1 STL](/project-assets/final-project/hypercarousel/4-lookup-table-recognition/v1.stl) ·
+[Download V2 STL](/project-assets/final-project/hypercarousel/4-lookup-table-recognition/v2.stl) ·
+[Fusion 360 Source](/project-assets/final-project/hypercarousel/4-lookup-table-recognition/HOLDER_ESP32_S3_CAM.f3d)
 
-1. **Capture frame** from ESP32S3 camera when slide ejection is detected
-2. **Quad detection** to find the four corners of the lookup table area
-3. **Perspective correction** (homography) to get a flat, rectangular view
-4. **Digit segmentation** to isolate each number in the table
-5. **Digit recognition** (MNIST-style classification) to read the values
+### Camera Mounting
 
-I built a web interface to preview the ESP32S3 camera feed and visualize each processing step. The ESP32S3 serves a simple webpage that shows the raw camera image and overlays the detected features.
+I added a new vertical aluminum extrusion bar to the frame specifically for the camera. The bar sits perpendicular to the projector's slide ejection slot, giving the camera a top-down view of the slide mount.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/camera-module-assembed—on-aluminum-extrusion.jpg"
+  caption="Camera module mounted on vertical aluminum extrusion"
+/>
+
+### The CV Pipeline
+
+I wrote the entire computer vision pipeline from scratch in C++ on the ESP32S3, without OpenCV (too heavy for embedded). The recognition pipeline has five stages:
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_0_original.png"
+  caption="Step 0: Raw camera capture (480×640, rotated 90° CCW)"
+/>
+
+**Step 1: Crop** — Remove unnecessary borders to focus on the card area. I crop 20% from top, 21% from bottom, and 19% from left.
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_1_cropped.png"
+  caption="Step 1: Cropped to 389×378 pixels"
+/>
+
+**Step 2: Binary threshold** — Adaptive thresholding converts grayscale to binary (block size 35px, constant C=10).
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_2_binary.png"
+  caption="Step 2: Binary image — black for dark features, white for background"
+/>
+
+**Step 3: L-mark detection** — This is the key innovation. Instead of generic quad detection, I designed L-shaped corner markers for each corner of the lookup table. Each L-mark has a specific orientation, and I use convolution kernels to detect them:
 
 ```cpp
-// ESP32S3 camera web server - serves MJPEG stream and processing preview
-#include "esp_camera.h"
-#include <WiFi.h>
-#include <WebServer.h>
+// L-mark detection kernel scoring
+inline float scoreLMark(const GrayImage& img, int cx, int cy, LMarkType type,
+                        int minArm = 8, int maxArm = 50, uint8_t darkThresh = 80) {
+    // Direction vectors based on orientation
+    int hDir, vDir;
+    switch (type) {
+        case LMARK_TL: hDir = 1;  vDir = 1;  break;  // right, down
+        case LMARK_TR: hDir = -1; vDir = 1;  break;  // left, down
+        case LMARK_BL: hDir = 1;  vDir = -1; break;  // right, up
+        case LMARK_BR: hDir = -1; vDir = -1; break;  // left, up
+    }
 
-WebServer server(80);
+    // Check corner is dark
+    if (img.get(cx, cy) > darkThresh) return 0;
 
-void handleStream() {
-  WiFiClient client = server.client();
-  camera_fb_t *fb = esp_camera_fb_get();
-  if (!fb) {
-    Serial.println("Camera capture failed");
+    // Measure horizontal and vertical arm lengths
+    int hLen = 0, vLen = 0;
+    for (int i = 1; i <= maxArm; i++) {
+        if (img.get(cx + hDir * i, cy) < darkThresh) hLen++;
+        else break;
+    }
+    for (int i = 1; i <= maxArm; i++) {
+        if (img.get(cx, cy + vDir * i) < darkThresh) vLen++;
+        else break;
+    }
+
+    if (hLen < minArm || vLen < minArm) return 0;
+
+    // Score based on arm lengths and balance
+    float score = (hLen + vLen) / 2.0f;
+    float ratio = (float)std::min(hLen, vLen) / std::max(hLen, vLen);
+    return score * (0.5f + 0.5f * ratio);
+}
+```
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_3_response_TL.png"
+    caption="TL kernel response (brighter = stronger match)"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_3_response_BR.png"
+    caption="BR kernel response"
+  />
+</GridSection>
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_3_corners.png"
+  caption="Step 3: All four L-marks detected (red dots mark corners)"
+/>
+
+**Step 4: Perspective transform** — Apply homography to warp the detected quad to a 300×420 rectangle.
+
+<GridSection columnCount={2}>
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_4_warped.png"
+    caption="Step 4: Perspective-corrected grayscale"
+  />
+  <Media
+    widthPercentage={100}
+    src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_4_warped_binary.png"
+    caption="Step 4: Warped binary for digit detection"
+  />
+</GridSection>
+
+**Step 5: Digit recognition** — Find connected components, filter by size, group into rows, and classify using heuristic features (aspect ratio, density, vertical distribution).
+
+<Media
+  widthPercentage={50}
+  src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/debug_5_digits.png"
+  caption="Step 5: Detected digit bounding boxes"
+/>
+
+### Web Debug Interface
+
+I built a web interface served directly from the ESP32S3 to preview the camera feed and test the pipeline in real-time. The interface includes orientation controls (8 rotation/flip combinations) and a keystone correction slider:
+
+```cpp
+// Web debug interface - handles processed image with transforms
+void handleProcessed() {
+  GrayImage gray, step1, step2, corrected;
+
+  if (!captureGray(gray)) {
+    server.send(500, "text/plain", "capture failed");
     return;
   }
 
-  // Send MJPEG frame
-  client.println("HTTP/1.1 200 OK");
-  client.println("Content-Type: multipart/x-mixed-replace; boundary=frame");
-  client.println();
+  // Step 1: 90 degree rotation (camera is mounted sideways)
+  bool ok = (orientMode < 4) ? rotate90CCW(gray, step1) : rotate90CW(gray, step1);
+  gray.release();
 
-  while (client.connected()) {
-    fb = esp_camera_fb_get();
-    if (fb) {
-      client.printf("--frame\r\nContent-Type: image/jpeg\r\nContent-Length: %d\r\n\r\n", fb->len);
-      client.write(fb->buf, fb->len);
-      client.println();
-      esp_camera_fb_return(fb);
-    }
-    delay(30);
+  // Step 2: additional transform (180, flipH, flipV, or none)
+  int subMode = orientMode % 4;
+  switch (subMode) {
+    case 0: step2 = std::move(step1); break;
+    case 1: rotate180(step1, step2); step1.release(); break;
+    case 2: flipH(step1, step2); step1.release(); break;
+    case 3: flipV(step1, step2); step1.release(); break;
   }
-}
 
-void setup() {
-  // Camera init, WiFi connect, etc.
-  server.on("/stream", handleStream);
-  server.begin();
+  // Apply keystone correction
+  if (keystoneVal != 0.0f) {
+    keystoneH(step2, corrected, keystoneVal);
+    step2.release();
+    output = &corrected;
+  }
+
+  // Send raw grayscale bytes with dimensions in headers
+  server.sendHeader("X-Width", String(output->width));
+  server.sendHeader("X-Height", String(output->height));
+  server.send(200, "application/octet-stream", "");
+  server.client().write(output->data, output->size());
 }
 ```
 
-{/* TODO: Add screenshot of web interface */}
+<Media
+  widthPercentage={100}
+  src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/cam-test-ui.jpeg"
+  caption="Web debug interface — camera feed, orientation controls, keystone correction"
+/>
 
-### The Reality
+### Cloud OCR via Vercel
 
-Here's where it gets frustrating. The Carousel ejects slides at slightly different angles every time — sometimes tilted left, sometimes right, sometimes perfectly straight. This inconsistency throws off my quad detection, which in turn ruins the perspective correction.
+The on-device heuristic recognizer works for clean images, but struggles with real-world handwriting variation. So I also built a cloud fallback — the ESP32S3 sends the processed image to a Vercel serverless function that calls Google Cloud Vision API:
 
-I tried using the V3 HyperSlide design with seven-segment digit guides scored into the cardstock. The idea was to help users write consistent, recognizable digits. But the laser scoring created too much contrast — the dark score lines confused my CV algorithm more than the handwritten digits themselves.
+```cpp
+// Cloud OCR - captures, transforms, and sends to Vercel API
+inline CloudOCRResult captureAndOCR() {
+    CloudOCRResult result;
 
-### Google Vision API Attempt
+    // Capture and decode to grayscale
+    camera_fb_t *fb = esp_camera_fb_get();
+    // ... decode JPEG to grayscale ...
 
-In desperation, I deployed a simple web service on Vercel that proxies images to Google Cloud Vision API for OCR:
+    // Apply transforms: 90° CCW rotation + horizontal flip
+    GrayImage rotated, flipped;
+    rotate90CCW(original, rotated);
+    flipH(rotated, flipped);
+
+    // Enhance contrast for better OCR
+    enhanceForOCR(flipped);
+
+    // Encode back to JPEG and send to Vercel
+    uint8_t *jpegBuf = grayToJpeg(flipped, &jpegLen, 95);
+    result = cloudOCR(jpegBuf, jpegLen);  // HTTP POST to Vercel
+
+    return result;
+}
+```
+
+The Vercel endpoint extracts numbers from the right column of the lookup table:
 
 ```typescript
-// Vercel serverless function for Google Vision OCR
-import { ImageAnnotatorClient } from "@google-cloud/vision";
+// Vercel API route - /api/ocr
+import vision from "@google-cloud/vision";
 
-export default async function handler(req, res) {
-  const client = new ImageAnnotatorClient();
-  const imageBuffer = Buffer.from(req.body.image, "base64");
+export async function POST(request: Request) {
+  const { image } = await request.json();
+  const client = new vision.ImageAnnotatorClient();
 
   const [result] = await client.textDetection({
-    image: { content: imageBuffer },
+    image: { content: image },
   });
 
-  const detections = result.textAnnotations;
-  res.json({ text: detections?.[0]?.description || "" });
+  // Extract numbers from right column based on x-position
+  const numbers = result.textAnnotations
+    ?.filter((a) => /^\d+$/.test(a.description || ""))
+    .filter((a) => a.boundingPoly?.vertices?.[0]?.x > imageWidth * 0.6)
+    .sort((a, b) => a.boundingPoly.vertices[0].y - b.boundingPoly.vertices[0].y)
+    .map((a) => parseInt(a.description));
+
+  return Response.json({ numbers, success: numbers.length > 0 });
 }
 ```
 
-Results: still terrible. Google Vision is optimized for printed text and clean documents, not handwritten digits on textured cardstock photographed through a fisheye ESP32 camera lens.
+### The Reality (It Doesn't Work Well)
 
-### What I Think I Need
+Let me be honest: the recognition accuracy is bad.
 
-Better markers. The current design relies on finding the lookup table boundaries visually, but there's nothing for the camera to reliably lock onto. I think I need:
+**On-device heuristic recognizer** — Results from the test image: **17, 17, 6, 5, 74** — but the ground truth was **16, 17, 23, 45, 67**. Only row 2 was correct. That's 20% accuracy.
 
-1. **High-contrast ArUco markers** or similar fiducials in fixed positions on the slide mount
-2. **Better lighting** — the projector lamp creates harsh shadows that vary with slide position
-3. **Higher resolution camera** — the OV2640 maxes out at 2MP, which might not be enough for small handwritten digits
+| Row | Detected | Expected | Issue                  |
+| --- | -------- | -------- | ---------------------- |
+| 1   | 17       | 16       | Misclassified 6 as 7   |
+| 2   | 17       | 17       | Recognized             |
+| 3   | 6        | 23       | Digits merged together |
+| 4   | 5        | 45       | Missing first digit    |
+| 5   | 74       | 67       | Misclassified          |
 
-This part of the project is still very much in progress.
+**Merged digits** are the main killer. When handwritten digits like "23" touch in the binary image, they're detected as a single blob. The heuristic recognizer can't handle that.
+
+**Google Cloud Vision API** — I thought the cloud would save me. It didn't. The API concatenates all visible digits into a single number "51438" instead of parsing them row by row. It detected characters fine but couldn't understand the table structure. The low resolution (480×640 after rotation) probably doesn't help — Google Vision is optimized for document scans, not tiny cardstock tables photographed by a $3 camera module.
+
+<Media
+  widthPercentage={66}
+  src="/project-assets/final-project/hypercarousel/4-lookup-table-recognition/google-vision-ocr-failed.png"
+  caption="Google Vision API returned '51438' — all digits concatenated"
+/>
+
+I tried the V3 HyperSlide design with seven-segment digit guides scored into the cardstock. The idea was to help users write consistent, recognizable digits. But the laser scoring created too much contrast — the dark score lines confused the CV algorithm more than the handwritten digits themselves. My "fix" made things worse.
+
+### What I Think I Need (Future Work)
+
+1. **Higher resolution camera** — the OV2640 maxes out at 2MP, which is likely insufficient for reliable OCR of small handwritten digits. A 5MP module might help.
+2. **Morphological operations** — erosion to separate touching digits before connected component analysis
+3. **Digit splitting heuristics** — detect wide blobs and attempt to split them based on aspect ratio
+4. **Better training data** — the heuristic recognizer was tuned on maybe 5 test images; it needs hundreds
+
+This part of the project is still very much in progress. For the final demo, I pre-loaded the lookup tables into the main controller's memory and bypassed the camera entirely. Not proud of it, but it let me demonstrate the core navigation concept.
+
+### Design Files
+
+- [ESP32-S3 Camera OCR Source Code (.zip)](/project-assets/final-project/hypercarousel/4-lookup-table-recognition/esp32-s3-cam-ocr.zip) — PlatformIO project with vision pipeline, web debug interface, and Vercel cloud OCR integration
 
 ## Rotary Encoder
 
-To track which slide is currently in position, I'm using a Hall effect sensor to detect the carousel tray rotation.
+To track which slide is currently in position, I planned to use a Hall effect sensor to detect the carousel tray rotation. This section is mostly about why it didn't work.
 
-### Why Hall Effect
+### The Idea
 
-The Kodak Carousel tray has 80 slots arranged in a circle. As the tray rotates, I need to count how many slots have passed to know which slide is currently at the projection position. A Hall effect sensor can detect the metal parts of the tray mechanism as they pass by.
+The Kodak Carousel tray has 80 slots arranged in a circle. As the tray rotates, I need to count how many slots have passed to know which slide is currently at the projection position. A Hall effect sensor can detect the metal parts of the tray mechanism as they pass by — no physical contact needed.
 
-### Sensor Design
+### Sensor Mounting
 
 I mounted the Hall effect sensor on a small bracket attached to the aluminum frame. The sensor sits about 3-4mm away from the rotating tray mechanism — close enough to detect reliably, far enough to avoid physical contact.
 
 {/* TODO: Add photo of Hall effect sensor mounted */}
 {/* TODO: Add diagram of sensor position */}
 
-The tolerance is a few millimeters, which should be fine given the carousel's mechanical consistency. In isolated testing, the sensor reliably detects each slot transition.
+In isolated testing (just the sensor and the main ESP32S3), it works perfectly. Clean pulses, reliable detection, accurate counting. I was feeling good about this.
 
-### The I2C Problem
+### The I2C Problem (Why It's Currently Disabled)
 
-Here's where things went wrong. The Hall effect sensor I'm using has an I2C interface (hence the dedicated 3.3V I2C connector on the main board). When I test it alone — just the sensor connected to the ESP32S3 — it works perfectly. Clean signals, reliable readings, no issues.
+Here's where things went wrong.
 
-But the moment I connect other I2C devices (the PS/2 submodule, the camera board), the bus starts throwing errors. The main board gets stuck waiting for I2C responses, the sensor readings become garbage, and sometimes the whole bus locks up.
+The Hall effect sensor uses I2C (hence the dedicated 3.3V connector on the main board). When I test it alone — just the sensor connected to the ESP32S3 — it works perfectly. Clean signals, reliable readings, no issues.
+
+But the moment I connect other I2C devices (the PS/2 submodule, the camera board), the bus starts throwing errors. The main board gets stuck waiting for I2C responses, the sensor readings become garbage, and sometimes the whole bus locks up completely.
 
 I've tried:
 
@@ -668,13 +895,67 @@ I've tried:
 - **Shorter cables** — marginal improvement
 - **Checking for address conflicts** — all devices have unique addresses
 - **Adding bus recovery logic** — helps sometimes, but not reliably
+- **Separate 3.3V regulator** — didn't help
 
 I don't know exactly why this happens. My best guesses:
 
 - **Capacitance issues** from multiple devices loading the bus
 - **Timing conflicts** between fast and slow I2C devices
 - **Power supply noise** affecting the 3.3V rail specifically
+- **Clock stretching incompatibility** between devices
 
-For now, the Hall effect sensor is disconnected while I debug. The system works fine without position tracking — I just have to manually keep track of which slide I'm on, which defeats some of the purpose but at least lets me demo the core hyperlink functionality.
+For the final demo, I disconnected the Hall effect sensor entirely. The system works fine without position tracking — I just have to mentally keep track of which slide I'm on, which defeats some of the purpose but at least lets me demonstrate the core hyperlink navigation.
+
+This is the most frustrating part of the project. I know the sensor works. I know the I2C bus works with other devices. But together? Something breaks. Classic embedded systems debugging: it works in isolation, fails in integration.
 
 {/* TODO: Add screenshot of I2C error if available */}
+
+## Reflection
+
+This project started as an exercise in analog nostalgia and ended as a lesson in compromise. Week 1 me wanted a purely mechanical system. Week 15 me has multiple microcontrollers, I2C buses, computer vision, and cloud API calls.
+
+### What Worked
+
+- **The servo button presser** — Sometimes the dumbest solution is the right one
+- **The PS/2 submodule** — Built once in Week 12, dropped in without changes
+- **The aluminum frame** — A "temporary" test jig that became permanent
+- **The HyperSlide design** — V2 works reliably after the width fix
+
+### What Didn't Work
+
+- **Cursor overlay** — Killed by basic optics I should have tested first
+- **On-device OCR** — 20% accuracy isn't good enough
+- **Cloud OCR** — Doesn't understand table structure
+- **Hall effect sensor integration** — I2C conflicts I can't resolve
+
+### What I Learned
+
+The biggest lesson: **test your risky assumptions first**. I spent weeks planning the cursor overlay system before trying it for 30 seconds. That 30-second test could have happened on day one.
+
+Second lesson: **embrace the dumb solution**. The servo pressing buttons is ridiculous. It's also the only motor system in this project that works reliably. Elegant engineering is worthless if it doesn't ship.
+
+Third lesson: **I2C is harder than it looks**. Multiple devices on a bus with mixed voltages, varying speeds, and different pull-up requirements? Debugging that is a project in itself.
+
+HyperCarousel V0 is a proof of concept that proves the concept. It navigates slides based on numpad input. The hyperlink detection mostly doesn't work, and the position tracking is disabled. But you can stand in front of it, press "3" on the numpad, and watch it advance to slide 3. That's something.
+
+V1 will need a better camera, a rethought I2C architecture, and probably a lot more debugging. But that's for next semester.
+
+## References
+
+- **Vannevar Bush's Memex** — [As We May Think (1945)](https://www.theatlantic.com/magazine/archive/1945/07/as-we-may-think/303881/)
+- **35mm Film Dimensions** — [Kodak Digitizing Blog](https://kodakdigitizing.com/blogs/news/how-to-tell-which-type-of-slides-you-have)
+- **Aperture Cards** — [Wikipedia](https://en.wikipedia.org/wiki/Aperture_card)
+- **PS/2 Protocol** — Documented in [Week 12](/projects/week-12-ps2-numpad-via-i2c-bridge/)
+
+## Design Files
+
+- **HyperSlide Mounts**
+  - [V0 Design (4× resolution JPG)](/project-assets/final-project/hypercarousel/0-hyper-slide/v0-99-figma-design-4x-export.jpg)
+  - [V2 Design (SVG)](/project-assets/final-project/hypercarousel/0-hyper-slide/v2-0-figma-export.svg)
+  - [V3 Design (SVG)](/project-assets/final-project/hypercarousel/0-hyper-slide/v3-1-figma-export.svg)
+- **Servo Holder**
+  - [V2 STL](/project-assets/final-project/hypercarousel/2-button-pressor-servo/v2.stl)
+  - [Fusion 360 Source](/project-assets/final-project/hypercarousel/2-button-pressor-servo/button-pressor-servo-holder.f3d)
+  - [Servo Test Code (.cpp)](/project-assets/final-project/hypercarousel/2-button-pressor-servo/servo-test.cpp)
+- **Computer Vision**
+  - [ESP32-S3 Camera OCR Source (.zip)](/project-assets/final-project/hypercarousel/4-lookup-table-recognition/esp32-s3-cam-ocr.zip)
