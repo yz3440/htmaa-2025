@@ -83,6 +83,8 @@ export const GLBViewer = ({
       cameraPosition[1] * cameraPosition[1] +
       cameraPosition[2] * cameraPosition[2],
   );
+
+  const filename = src.split("/").pop();
   return (
     <div
       className={cn(
@@ -153,6 +155,11 @@ export const GLBViewer = ({
       {/* Loading indicator overlay */}
       <div className="absolute right-2 top-2 rounded bg-background/80 px-2 py-1 text-xs text-muted-foreground">
         Drag to rotate • Scroll to zoom
+      </div>
+
+      {/* Left click to pan, right click to rotate, scroll to zoom */}
+      <div className="absolute left-2 top-2 rounded bg-background/80 px-2 py-1 text-xs text-muted-foreground">
+        {filename}
       </div>
     </div>
   );
