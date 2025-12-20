@@ -918,32 +918,15 @@ In isolated testing (just the sensor and the main ESP32S3), it works perfectly. 
 
 Here's where things went wrong.
 
-The Hall effect sensor uses I2C (hence the dedicated 3.3V connector on the main board). When I test it alone — just the sensor connected to the ESP32S3 — it works perfectly. Clean signals, reliable readings, no issues.
+The Hall effect sensor (AS5600) uses I2C. I bought a [pre-assembled breakout board from Amazon](https://www.amazon.com/Magnetic-Encoder-Induction-Measurement-Precision/dp/B094F8H591?th=1) — convenient, but that convenience came with a catch.
 
-But the moment I connect other I2C devices (the PS/2 submodule, the camera board), the bus starts throwing errors. The main board gets stuck waiting for I2C responses, the sensor readings become garbage, and sometimes the whole bus locks up completely.
+When I test the sensor alone — just the AS5600 connected to the ESP32S3 — it works perfectly. Clean signals, reliable readings, no issues. But the moment I connect it alongside other I2C devices on the main board, I2C errors start appearing. Interestingly, the other I2C devices (PS/2 submodule, camera board) work fine together — the errors only happen when the Hall effect sensor is connected.
 
-I've tried:
-
-| Attempted Fix              | Result                            |
-| -------------------------- | --------------------------------- |
-| Different pull-up values   | No change                         |
-| Shorter cables             | Marginal improvement              |
-| Checking address conflicts | All devices have unique addresses |
-| Adding bus recovery logic  | Helps sometimes, but not reliably |
-| Separate 3.3V regulator    | Didn't help                       |
-
-I don't know exactly why this happens. My best guesses:
-
-| Possible Cause     | Theory                                    |
-| ------------------ | ----------------------------------------- |
-| Capacitance issues | Multiple devices loading the bus          |
-| Timing conflicts   | Fast and slow I2C devices on the same bus |
-| Power supply noise | Affecting the 3.3V rail specifically      |
-| Clock stretching   | Incompatibility between devices           |
+My suspicion: the breakout board probably has different I2C pull-up resistor values than what I designed for on my main board. Having mismatched pull-ups on the same bus can cause signal integrity issues. I didn't have time to investigate further — measuring the resistors, testing different values, or designing my own AS5600 breakout would have been the proper debugging path.
 
 For the final demo, I disconnected the Hall effect sensor entirely. Instead, I rely on **manual reset** — every time HyperCarousel is turned on, the carousel tray has to be manually positioned to slot 0 before the system works properly. The software assumes it starts at position 0 and counts button presses from there.
 
-This is the most frustrating part of the project. I know the sensor works. I know the I2C bus works with other devices. But together? Something breaks. Classic embedded systems debugging: it works in isolation, fails in integration.
+For a proof of concept, this is fine. The carousel still works, just with a minor setup step. Proper position tracking remains on the list for a future revision.
 
 ## Reflection
 
